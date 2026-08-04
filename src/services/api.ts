@@ -3,11 +3,13 @@ import { store } from '../store/store';
 import { startLoading, stopLoading } from '../store/uiSlice';
 import { forceLogout } from '../utils/auth.utils';
 
+console.log("API URL =", import.meta.env.VITE_API_URL);
+
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, // Crucial for sending the httpOnly refresh token cookie
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
