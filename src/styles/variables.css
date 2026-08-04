@@ -1,0 +1,11 @@
+:root {
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.15);
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --danger: #f43f5e;
+  --bg-portal: #020617;
+  --bg-card: #0f172a;
+  --border-slate: #1e293b;
+}

@@ -1,0 +1,18 @@
+{
+  "name": "JCER Student Admission Portal",
+  "short_name": "JCER Admission",
+  "description": "Progressive Web App for Jain College of Engineering and Research Student Admission",
+  "start_url": "/admission/login",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1241a1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

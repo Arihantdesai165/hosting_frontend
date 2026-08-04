@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+src/pages/admission/node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System Files & Editor settings
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.sln
+*.sw?

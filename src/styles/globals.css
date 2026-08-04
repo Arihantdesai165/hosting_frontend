@@ -1,0 +1,803 @@
+@import './variables.css';
+@import './animations.css';
+
+html {
+  font-size: 90%; /* 14.4px root rem base -> ~10% uniform scale reduction across all Tailwind rem design tokens */
+}
+
+html, body, #root {
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+/* Custom Modern Pastel Mesh Gradient Background - Light Mode */
+body {
+  background-color: #f1f4fa;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(232, 229, 255, 0.85) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(225, 245, 254, 0.75) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(253, 242, 248, 0.9) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(253, 242, 248, 0.9) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(232, 245, 233, 0.85) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(225, 245, 254, 0.5) 0px, transparent 60%);
+  background-attachment: fixed;
+  background-size: cover;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a1a1a;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+/* Custom Modern Pastel Mesh Gradient Background - Dark Mode */
+.dark body {
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(30, 27, 75, 0.7) 0px, transparent 50%),     /* dark indigo */
+    radial-gradient(at 50% 0%, rgba(8, 47, 73, 0.6) 0px, transparent 50%),      /* dark sky */
+    radial-gradient(at 100% 0%, rgba(88, 28, 135, 0.5) 0px, transparent 50%),   /* dark purple/pink */
+    radial-gradient(at 0% 100%, rgba(88, 28, 135, 0.5) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.5) 0px, transparent 50%),    /* dark emerald */
+    radial-gradient(at 50% 50%, rgba(30, 27, 75, 0.4) 0px, transparent 60%);
+}
+
+/* Glassmorphism containers matching screenshot */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.08); /* soft indigo card-lift glow */
+  transform: translateY(-4px);
+}
+
+.dark .glass-panel {
+  background: rgba(26, 26, 26, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.25);
+}
+
+.dark .glass-panel:hover {
+  background: rgba(26, 26, 26, 0.55);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+}
+
+.glass-panel-opaque {
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-opaque:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.08);
+  transform: translateY(-4px);
+}
+
+.dark .glass-panel-opaque {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .glass-panel-opaque:hover {
+  background: rgba(26, 26, 26, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(26, 26, 26, 0.15);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 26, 26, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Hover and active animations */
+.hover-scale {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-scale:hover {
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Active navigation dot indicator */
+.active-nav-indicator {
+  width: 6px;
+  height: 6px;
+  background-color: #1a1a1a;
+  border-radius: 50%;
+}
+
+.dark .active-nav-indicator {
+  background-color: #ffffff;
+}
+
+/* Global Font Color Override: Glossy Black in Light Mode, White in Dark Mode */
+body, 
+p, 
+span, 
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6, 
+td, 
+th, 
+label, 
+input, 
+select, 
+textarea {
+  color: #1a1a1a;
+}
+
+/* Global placeholder styling - very light gray */
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  color: #6f6d6d !important;
+  opacity:1;
+}
+
+.dark body, 
+.dark p, 
+.dark span, 
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6, 
+.dark td, 
+.dark th, 
+.dark a, 
+.dark button, 
+.dark label, 
+.dark input, 
+.dark select, 
+.dark textarea,
+.dark svg {
+  color: #ffffff !important;
+}
+
+/* Dark mode placeholder styling - slightly muted gray on dark backgrounds */
+.dark input::placeholder,
+.dark select::placeholder,
+.dark textarea::placeholder {
+  color: #525252 !important;
+  opacity: 1;
+}
+
+/* Ensure Tailwind text utilities are overridden for perfect glossy black / white */
+.text-neutral-900, .text-neutral-850, .text-neutral-800, .text-neutral-750, .text-neutral-700, .text-neutral-600, .text-neutral-500, .text-neutral-400,
+.text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400, .text-slate-300,
+.text-neutral-300, .text-slate-100, .text-neutral-100 {
+  color: #1a1a1a;
+}
+
+.dark .text-neutral-900, .dark .text-neutral-850, .dark .text-neutral-800, .dark .text-neutral-750, .dark .text-neutral-700, .dark .text-neutral-600, .dark .text-neutral-500, .dark .text-neutral-400,
+.dark .text-slate-900, .dark .text-slate-850, .dark .text-slate-800, .dark .text-slate-700, .dark .text-slate-600, .dark .text-slate-500, .dark .text-slate-400, .dark .text-slate-300,
+.dark .text-neutral-300, .dark .text-slate-100, .dark .text-neutral-100,
+.dark .dark\:text-neutral-900, .dark .dark\:text-neutral-850, .dark .dark\:text-neutral-800, .dark .dark\:text-neutral-750, .dark .dark\:text-neutral-700, .dark .dark\:text-neutral-600, .dark .dark\:text-neutral-500, .dark .dark\:text-neutral-400,
+.dark .dark\:text-slate-900, .dark .dark\:text-slate-850, .dark .dark\:text-slate-800, .dark .dark\:text-slate-700, .dark .dark\:text-slate-600, .dark .dark\:text-slate-500, .dark .dark\:text-slate-400, .dark .dark\:text-slate-300,
+.dark .dark\:text-neutral-300, .dark .dark\:text-slate-100, .dark .dark\:text-neutral-100,
+.dark .dark\:text-neutral-200, .dark .dark\:text-slate-200 {
+  color: #ffffff !important;
+}
+
+/* Maintain status colors for alerts & badges specifically */
+.text-emerald-500, .text-\[\#16A34A\], .dark .text-emerald-400 {
+  color: #16a34a !important;
+}
+.text-rose-500, .text-rose-600, .text-rose-450, .text-rose-400, .dark .text-rose-450 {
+  color: #e11d48 !important;
+}
+.text-indigo-600, .text-\[\#4F46E5\], .dark .text-indigo-400 {
+  color: #4f46e5 !important;
+}
+.text-amber-500, .text-amber-600, .text-amber-700, .dark .text-amber-450 {
+  color: #d97706 !important;
+}
+
+/* Sub-nav pill text overrides on hover & states */
+.hover\:text-neutral-800:hover, .hover\:text-neutral-900:hover, .hover\:text-neutral-700:hover, .hover\:text-black:hover {
+  color: #000000 !important;
+}
+.dark .hover\:text-neutral-800:hover, .dark .hover\:text-neutral-900:hover, .dark .hover\:text-neutral-200:hover, .dark .hover\:text-white:hover {
+  color: #ffffff !important;
+}
+
+/* Enforce white text inside explicitly white text classes or dark backgrounds */
+.text-white, 
+.text-white *, 
+.bg-black,
+.bg-black *,
+.bg-\[\#1A1A1A\],
+.bg-\[\#1A1A1A\] *,
+.bg-\[\#1a1a1a\],
+.bg-\[\#1a1a1a\] *,
+.header-dark-btn,
+.header-dark-btn *,
+.bg-neutral-950,
+.bg-neutral-950 *, 
+.bg-neutral-900,
+.bg-neutral-900 *, 
+.bg-neutral-850,
+.bg-neutral-850 *, 
+.bg-neutral-800,
+.bg-neutral-800 *, 
+.bg-slate-950,
+.bg-slate-950 *, 
+.bg-slate-900,
+.bg-slate-900 *,
+.bg-slate-800,
+.bg-slate-800 * {
+  color: #ffffff !important;
+}
+
+/* Enforce white text for SVG icons inside dark background elements */
+.bg-\[\#1A1A1A\] svg,
+.bg-\[\#1a1a1a\] svg,
+.bg-neutral-950 svg,
+.bg-neutral-900 svg,
+.bg-neutral-850 svg,
+.bg-neutral-800 svg,
+.header-dark-btn svg,
+.btn-primary-custom svg {
+  color: #ffffff !important;
+}
+
+/* Handle Tailwind dark:bg-* variant classes — these apply on elements with class 'dark:bg-neutral-800' etc. in dark mode */
+/* Using [class*=] attribute selector to catch dark:bg-neutral-800, dark:bg-neutral-800/60, dark:bg-neutral-900/95 etc. */
+.dark [class*="dark:bg-neutral-8"],
+.dark [class*="dark:bg-neutral-9"],
+.dark [class*="dark:bg-slate-8"],
+.dark [class*="dark:bg-slate-9"],
+.dark [class*="dark:bg-black"],
+.dark [class*="dark:bg-zinc-8"],
+.dark [class*="dark:bg-zinc-9"] {
+  color: #ffffff !important;
+}
+
+/* Children of dark-variant backgrounds also get white text */
+.dark [class*="dark:bg-neutral-8"] > *,
+.dark [class*="dark:bg-neutral-9"] > *,
+.dark [class*="dark:bg-slate-8"] > *,
+.dark [class*="dark:bg-slate-9"] > *,
+.dark [class*="dark:bg-black"] > *,
+.dark [class*="dark:bg-zinc-8"] > *,
+.dark [class*="dark:bg-zinc-9"] > * {
+  color: #ffffff !important;
+}
+
+/* SVG icons inside dark-variant backgrounds get white stroke/fill */
+.dark [class*="dark:bg-neutral-8"] svg,
+.dark [class*="dark:bg-neutral-9"] svg,
+.dark [class*="dark:bg-slate-8"] svg,
+.dark [class*="dark:bg-slate-9"] svg,
+.dark [class*="dark:bg-black"] svg,
+.dark [class*="dark:bg-zinc-8"] svg,
+.dark [class*="dark:bg-zinc-9"] svg {
+  color: #ffffff !important;
+  stroke: currentColor;
+}
+
+
+/* Muted secondary descriptions inside dark backgrounds should be light gray */
+.bg-neutral-950 .text-neutral-400,
+.bg-neutral-900 .text-neutral-400,
+.bg-neutral-850 .text-neutral-400,
+.bg-neutral-800 .text-neutral-400,
+.bg-slate-950 .text-neutral-400,
+.bg-slate-900 .text-neutral-400,
+.bg-slate-800 .text-neutral-400 {
+  color: #e5e5e5 !important;
+}
+
+/* Dark Chip / Badge / Icon Circle — always dark bg with white text */
+/* Light mode: solid near-black background with white text */
+/* Dark mode: slightly lighter dark with white text */
+.dark-chip {
+  background-color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.dark-chip *,
+.dark-chip svg {
+  color: #ffffff !important;
+}
+
+.dark .dark-chip {
+  background-color: #2e2e3a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.dark .dark-chip *,
+.dark .dark-chip svg {
+  color: #ffffff !important;
+}
+
+/* Profile / Logout Dropdown Menu Styles */
+/* Light Mode: white background with dark text */
+.profile-dropdown {
+  background: rgba(255, 255, 255, 0.97) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.12), 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+
+.profile-dropdown-label {
+  color: #a3a3a3 !important;
+}
+
+.profile-dropdown-value {
+  color: #1a1a1a !important;
+}
+
+.profile-dropdown-logout,
+.profile-dropdown-logout *,
+.profile-dropdown-logout svg {
+  color: #e11d48 !important;
+}
+
+.profile-dropdown-logout:hover {
+  background-color: rgba(225, 29, 72, 0.05) !important;
+}
+
+/* Dark Mode: dark glass background with white text */
+.dark .profile-dropdown {
+  background: rgba(15, 15, 15, 0.96) !important;
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.5);
+}
+
+.dark .profile-dropdown-label {
+  color: #a3a3a3 !important;
+}
+
+.dark .profile-dropdown-value {
+  color: #ffffff !important;
+}
+
+.dark .profile-dropdown-logout,
+.dark .profile-dropdown-logout *,
+.dark .profile-dropdown-logout svg {
+  color: #fb7185 !important;
+}
+
+.dark .profile-dropdown-logout:hover {
+  background-color: rgba(255, 100, 100, 0.08) !important;
+}
+
+.nav-pill-active {
+  background-color: #1a1a1a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.nav-pill-active,
+.nav-pill-active * {
+  color: #ffffff;
+}
+
+.dark .nav-pill-active {
+  background-color: #ffffff;
+}
+
+.dark .nav-pill-active,
+.dark .nav-pill-active * {
+  color: #1a1a1a;
+}
+
+/* Custom Active Sidebar Icon */
+.sidebar-icon-active {
+  background-color: #1a1a1a;
+}
+
+.sidebar-icon-active,
+.sidebar-icon-active * {
+  color: #ffffff;
+}
+
+.dark .sidebar-icon-active {
+  background-color: #ffffff;
+}
+
+.dark .sidebar-icon-active,
+.dark .sidebar-icon-active * {
+  color: #1a1a1a;
+}
+
+/* Custom Sidebar Logo Container */
+.sidebar-logo-container {
+  background-color: #1a1a1a;
+}
+
+.sidebar-logo-container,
+.sidebar-logo-container * {
+  color: #ffffff;
+}
+
+.dark .sidebar-logo-container {
+  background-color: #ffffff;
+}
+
+.dark .sidebar-logo-container,
+.dark .sidebar-logo-container * {
+  color: #1a1a1a;
+}
+
+/* Custom Action Button */
+.btn-primary-custom {
+  background-color: #1a1a1a;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary-custom,
+.btn-primary-custom * {
+  color: #ffffff;
+}
+
+.btn-primary-custom:hover {
+  background-color: #262626;
+}
+
+.dark .btn-primary-custom {
+  background-color: #ffffff;
+}
+
+.dark .btn-primary-custom,
+.dark .btn-primary-custom * {
+  color: #1a1a1a;
+}
+
+.dark .btn-primary-custom:hover {
+  background-color: #f5f5f5;
+}
+
+/* Custom Active Badge */
+.badge-active-custom {
+  background-color: #1a1a1a;
+}
+
+.badge-active-custom,
+.badge-active-custom * {
+  color: #ffffff;
+}
+
+.dark .badge-active-custom {
+  background-color: #ffffff;
+}
+
+.dark .badge-active-custom,
+.dark .badge-active-custom * {
+  color: #1a1a1a;
+}
+
+/* Custom Chart Tooltip */
+.custom-chart-tooltip {
+  background-color: #1a1a1a !important;
+}
+
+.custom-chart-tooltip,
+.custom-chart-tooltip * {
+  color: #ffffff !important;
+}
+
+.custom-chart-tooltip .text-neutral-400 {
+  color: #a3a3a3 !important;
+}
+
+/* Glassmorphism Capsule Navigation Bars */
+.glass-bar {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(24px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(120%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04) !important;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.dark .glass-bar {
+  background: rgba(15, 23, 42, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Recharts Tooltip Styles */
+.recharts-default-tooltip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(26, 26, 26, 0.08) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+}
+
+.recharts-default-tooltip * {
+  color: #1a1a1a !important;
+}
+
+.dark .recharts-default-tooltip {
+  background-color: rgba(26, 26, 26, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .recharts-default-tooltip * {
+  color: #ffffff !important;
+}
+
+/* Header Dark Icons/Buttons Styles matching screenshot dark capsules */
+.header-dark-btn {
+  background-color: #2e2e2e !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: background-color 0.2s ease, transform 0.2s ease !important;
+}
+
+.header-dark-btn * {
+  color: #ffffff !important;
+}
+
+.header-dark-btn:hover {
+  background-color: #3e3e3e !important;
+}
+
+.dark .header-dark-btn {
+  background-color: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .header-dark-btn:hover {
+  background-color: #2e2e2e !important;
+}
+
+/* Glass Table Container with White Glassmorphism Background */
+.glass-table-container {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* On dark mode, keep the white glassmorphic background to contrast with the dark mesh body background */
+.dark .glass-table-container {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Table Header styling: solid black background with white texts */
+.glass-table-container thead {
+  background-color: #1a1a1a !important;
+}
+
+.glass-table-container thead th,
+.glass-table-container thead th * {
+  color: #ffffff !important;
+}
+
+.dark .glass-table-container thead th,
+.dark .glass-table-container thead th * {
+  color: #ffffff !important;
+}
+
+/* Ensure all table body texts (p, span, td, standard text labels) inside glass-table-container are glossy black for contrast */
+.glass-table-container tbody td,
+.glass-table-container tbody td *,
+.glass-table-container h3,
+.glass-table-container h3 *,
+.dark .glass-table-container tbody td,
+.dark .glass-table-container tbody td *,
+.dark .glass-table-container h3,
+.dark .glass-table-container h3 * {
+  color: #1a1a1a !important;
+}
+
+/* Exception: btn-primary-custom inside table always keeps white text */
+.glass-table-container .btn-primary-custom,
+.glass-table-container .btn-primary-custom *,
+.glass-table-container .btn-primary-custom svg,
+.dark .glass-table-container .btn-primary-custom,
+.dark .glass-table-container .btn-primary-custom *,
+.dark .glass-table-container .btn-primary-custom svg {
+  color: #ffffff !important;
+}
+
+/* Hierarchy: Secondary elements like dates or subject codes should be slightly lighter but still highly legible */
+.glass-table-container .text-neutral-400,
+.glass-table-container .text-neutral-500,
+.glass-table-container .text-slate-500,
+.glass-table-container .text-gray-500,
+.glass-table-container .text-xs,
+.dark .glass-table-container .text-neutral-400,
+.dark .glass-table-container .text-neutral-500,
+.dark .glass-table-container .text-slate-500,
+.dark .glass-table-container .text-gray-500,
+.dark .glass-table-container .text-xs {
+  color: #555555 !important;
+}
+
+/* Preserve active badge backgrounds inside the table cards, preventing dark-mode background overrides */
+.glass-table-container .bg-emerald-50,
+.glass-table-container .bg-\[\#E8F5E9\],
+.dark .glass-table-container .dark\:bg-emerald-950\/30,
+.dark .glass-table-container .bg-emerald-950\/30 {
+  background-color: #E8F5E9 !important;
+}
+.glass-table-container .text-emerald-500,
+.glass-table-container .text-emerald-600,
+.dark .glass-table-container .dark\:text-emerald-400 {
+  color: #16a34a !important;
+}
+
+.glass-table-container .bg-indigo-50,
+.glass-table-container .bg-\[\#E8E5FF\],
+.dark .glass-table-container .dark\:bg-indigo-950\/20,
+.dark .glass-table-container .dark\:bg-indigo-950\/30,
+.dark .glass-table-container .bg-indigo-950\/30 {
+  background-color: #E8E5FF !important;
+}
+.glass-table-container .text-indigo-500,
+.glass-table-container .text-indigo-600,
+.dark .glass-table-container .dark\:text-indigo-400 {
+  color: #4f46e5 !important;
+}
+
+.glass-table-container .bg-rose-50,
+.dark .glass-table-container .dark\:bg-rose-950\/30,
+.dark .glass-table-container .bg-rose-950\/30 {
+  background-color: #fff1f2 !important;
+}
+.glass-table-container .text-rose-500,
+.glass-table-container .text-rose-600,
+.dark .glass-table-container .dark\:text-rose-450 {
+  color: #e11d48 !important;
+}
+
+.glass-table-container .bg-neutral-100,
+.dark .glass-table-container .dark\:bg-neutral-800 {
+  background-color: #e5e5e5 !important;
+}
+
+/* Ensure hover row styling contrasts beautifully */
+.glass-table-container tr:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+.dark .glass-table-container tr:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Fix download button/receipt actions to look premium black (excludes btn-primary-custom) */
+.glass-table-container button:not(.btn-primary-custom),
+.dark .glass-table-container button:not(.btn-primary-custom) {
+  color: #1a1a1a !important;
+}
+.glass-table-container button:not(.btn-primary-custom):hover,
+.dark .glass-table-container button:not(.btn-primary-custom):hover {
+  color: #4f46e5 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ADMIN PORTAL — Violet #7C3AED accent (distinct from Student)   */
+/* ═══════════════════════════════════════════════════════════════ */
+.admin-sidebar-active { background-color: #7C3AED !important; }
+.admin-sidebar-active, .admin-sidebar-active * { color: #ffffff !important; }
+.dark .admin-sidebar-active { background-color: #8B5CF6 !important; }
+
+.admin-nav-pill-active {
+  background-color: #7C3AED !important;
+  box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.35);
+}
+.admin-nav-pill-active, .admin-nav-pill-active * { color: #ffffff !important; }
+.dark .admin-nav-pill-active { background-color: #8B5CF6 !important; }
+
+.btn-admin-primary {
+  background-color: #7C3AED;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.btn-admin-primary, .btn-admin-primary * { color: #ffffff !important; }
+.btn-admin-primary svg { color: #ffffff !important; }
+.btn-admin-primary:hover { background-color: #6D28D9 !important; }
+
+.badge-admin { background-color: #7C3AED !important; }
+.badge-admin, .badge-admin * { color: #ffffff !important; }
+
+.audit-log-row { border-left: 3px solid #7C3AED; }
+
+/* ========================================================================= */
+/* UNIVERSAL TABLE CUSTOMIZATION (DARK HEADERS & COLUMN GRID LINES)          */
+/* ========================================================================= */
+table {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+}
+
+/* 2nd Image Dark Header Style */
+table thead {
+  background-color: #111111 !important; /* Deep black bg */
+  color: #ffffff !important;
+}
+
+.dark table thead {
+  background-color: #18181b !important; /* Deep zinc-900 bg for dark mode */
+  color: #ffffff !important;
+}
+
+table thead th {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important; /* xs size matching image */
+  letter-spacing: 0.05em !important;
+  padding: 12px 16px !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.15) !important; /* Vertical columns grid in header */
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+
+/* Grids / Vertical lines in body column middle */
+table tbody td {
+  padding: 12px 16px !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important; /* Vertical grid lines for columns */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+
+.dark table tbody td {
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important; /* Dark mode vertical grid lines */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Keep first column left-aligned for readability */
+table thead th:first-child,
+table tbody td:first-child {
+  text-align: left !important;
+}
+
+/* Remove last columns grid line to keep it clean */
+table thead th:last-child,
+table tbody td:last-child {
+  border-right: none !important;
+}
+
+/* Row hover effect for premium look */
+table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+.dark table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}

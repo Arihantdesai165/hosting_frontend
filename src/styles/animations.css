@@ -1,0 +1,212 @@
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reverse-spin {
+  animation: spin-reverse 1s linear infinite !important;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(226, 232, 240, 0.4) 25%,
+    rgba(241, 245, 249, 0.6) 37%,
+    rgba(226, 232, 240, 0.4) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(38, 38, 38, 0.4) 25%,
+    rgba(64, 64, 64, 0.6) 37%,
+    rgba(38, 38, 38, 0.4) 63%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes flowPulse {
+  0% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: -100% 0%;
+  }
+}
+
+.animate-flow-line {
+  background: linear-gradient(90deg, #e2e8f0, #e2e8f0 35%, #3b82f6 45%, #10b981 50%, #3b82f6 55%, #e2e8f0 65%, #e2e8f0);
+  background-size: 200% 100%;
+  animation: flowPulse 2.5s infinite linear;
+}
+
+.dark .animate-flow-line {
+  background: linear-gradient(90deg, #1e293b, #1e293b 35%, #2563eb 45%, #10b981 50%, #2563eb 55%, #1e293b 65%, #1e293b);
+  background-size: 200% 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* LANDING PAGE PREMIUM ANIMATIONS                                */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Gentle floating bob for feature cards */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 4s ease-in-out 1s infinite;
+}
+
+.animate-float-slow {
+  animation: float 5s ease-in-out 0.5s infinite;
+}
+
+.animate-float-slower {
+  animation: float 6s ease-in-out 1.5s infinite;
+}
+
+/* Staggered fade-in-up for hero elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Pulse ring for step icon hover */
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+.animate-pulse-ring:hover {
+  animation: pulseRing 1.2s ease-out infinite;
+}
+
+/* Floating decorative blob animation */
+@keyframes floatingBlob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(10px, -15px) scale(1.05);
+  }
+  50% {
+    transform: translate(-5px, -25px) scale(1);
+  }
+  75% {
+    transform: translate(-15px, -10px) scale(0.95);
+  }
+}
+
+.animate-blob {
+  animation: floatingBlob 8s ease-in-out infinite;
+}
+
+.animate-blob-delayed {
+  animation: floatingBlob 8s ease-in-out 2s infinite;
+}
+
+.animate-blob-slow {
+  animation: floatingBlob 10s ease-in-out 4s infinite;
+}
+
+/* Dotted line dash animation */
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-dash {
+  animation: dashMove 1.5s linear infinite;
+}
+
+/* Scale-in for cards */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}

@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Interop */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "react": ["./node_modules/react"],
+      "react/*": ["./node_modules/react/*"],
+      "react-dom": ["./node_modules/react-dom"],
+      "react-dom/*": ["./node_modules/react-dom/*"],
+      "@types/react": ["./node_modules/@types/react"],
+      "@types/react/*": ["./node_modules/@types/react/*"],
+      "@types/react-dom": ["./node_modules/@types/react-dom"],
+      "@types/react-dom/*": ["./node_modules/@types/react-dom/*"],
+      "@/*": ["./src/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@services/*": ["./src/services/*"],
+      "@store/*": ["./src/store/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@types/*": ["./src/types/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@styles/*": ["./src/styles/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/pages/admin/ExamSchedulePage.tsx",
+    "src/pages/admin/FeeCollectionReportPage.tsx",
+    "src/pages/admin/FeeManagementPage.tsx",
+    "src/pages/admin/IDCardGenerationPage.tsx",
+    "src/pages/admin/TimetableCreationPage.tsx",
+    "src/pages/admin/users/StudentManagementPage.tsx",
+    "src/pages/admin/users/TeacherManagementPage.tsx",
+    "src/pages/admin/users/HodManagementPage.tsx",
+    "src/pages/admin/users/ParentManagementPage.tsx",
+    "src/components/layout/StudentLayout.tsx"
+  ]
+}
