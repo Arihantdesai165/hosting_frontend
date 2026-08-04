@@ -307,7 +307,7 @@ const StudentDetail = () => {
                             docs[key] ? (
                                 <a
                                     key={key}
-                                    href={`http://localhost:5000${docs[key]}`}
+                                    href={`${(import.meta.env.VITE_API_URL || '/api').replace('/api', '')}${docs[key]}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition"

@@ -128,7 +128,7 @@ const Login = () => {
                 </div>
                 <div>
                     <a
-                        href="/api/public/handbook"
+                        href={`${import.meta.env.VITE_API_URL || ''}/public/handbook`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-primary-600 transition-colors"

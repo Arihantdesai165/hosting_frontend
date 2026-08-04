@@ -67,7 +67,7 @@ export const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch('/api/system/config');
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/system/config`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {

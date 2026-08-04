@@ -377,7 +377,7 @@ const StudentDashboard = () => {
 // ═══════════════════════════════════════════════
 const DashboardFooterInfo = ({ closingDateIso, feeStatusText, isClosed }) => {
     const handleHandbookDownload = () => {
-        window.open('/api/public/handbook', '_blank');
+        window.open(`${import.meta.env.VITE_API_URL || ''}/public/handbook`, '_blank');
     };
 
     const formattedClosing = () => {

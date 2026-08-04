@@ -4,7 +4,7 @@ import { startLoading, stopLoading } from '../store/uiSlice';
 import { forceLogout } from '../utils/auth.utils';
 
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true, // Crucial for sending the httpOnly refresh token cookie
   headers: {
     'Content-Type': 'application/json',
@@ -62,7 +62,11 @@ API.interceptors.response.use(
 
       try {
         // Attempt to seamlessly refresh the session using the httpOnly cookie
-        const refreshResponse = await axios.post('/api/auth/refresh-token', {}, { withCredentials: true });
+        const refreshResponse = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
         
         const { token, user } = refreshResponse.data.data;
         
