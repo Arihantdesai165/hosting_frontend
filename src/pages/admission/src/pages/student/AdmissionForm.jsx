@@ -12,12 +12,10 @@ import {
     CheckCircle2
 } from 'lucide-react';
 import api from '../../../../../services/api';
-import { buildFileUrl } from '../../../../../utils/file.utils';
 import toast from 'react-hot-toast';
 import StepIndicator from '../../components/StepIndicator';
 import useApplicationStatus from '../../hooks/useApplicationStatus';
 import { getAcademicYear } from '../../../../../utils/date.util';
-import { downloadAdmissionPDF } from '../../utils/pdfGenerator';
 import Step1Admission from './form-steps/Step1Admission';
 import Step2Personal from './form-steps/Step2Personal';
 import Step3Parent from './form-steps/Step3Parent';
@@ -28,6 +26,7 @@ import Step7Review from './form-steps/Step7Review';
 import SubmittedView from './components/SubmittedView';
 import LoadingContainer from '../../components/LoadingContainer';
 import { FormSkeleton } from '../../components/Skeleton';
+import { downloadAdmissionPDF } from '../../utils/pdfGenerator';
 
 const STEPS = [
     { id: 1, label: 'Admission' },
@@ -79,7 +78,6 @@ const getInitialDraftData = () => {
 
 const AdmissionForm = () => {
     const [currentStep, setCurrentStep] = useState(1);
-    const [isStepInitialized, setIsStepInitialized] = useState(false);
     const [formData, setFormData] = useState(() => getInitialDraftData());
     const [formLoading, setFormLoading] = useState(true);
     const [stepTransition, setStepTransition] = useState(false);
@@ -93,7 +91,7 @@ const AdmissionForm = () => {
             try {
                 const res = await api.get('/system/config');
                 if (res.data?.success && res.data?.data?.admissionOpen === false) {
-                    setAdmissionsClosed(false); // Force false to keep admissions open for testing
+                    setAdmissionsClosed(true);
                 }
             } catch (err) {
                 console.warn('Could not check system admission status in AdmissionForm:', err);
@@ -276,31 +274,27 @@ const AdmissionForm = () => {
         const isEditable = !statusLoading && stepStatus && 
             (stepStatus.applicationStatus === 'DRAFT' || stepStatus.applicationStatus === 'REJECTED' || stepStatus.applicationStatus === 'CORRECTION_REQUIRED');
 
-        if (isEditable && !isStepInitialized) {
+        if (isEditable && !isNavigating.current) {
             const searchParams = new URLSearchParams(window.location.search);
             const queryStep = searchParams.get('step');
             const savedStep = queryStep || localStorage.getItem('admission_form_step');
-            
-            let initialStep = 1;
             if (savedStep && parseInt(savedStep) >= 1) {
                 const target = parseInt(savedStep);
                 if (isStepAccessible(target)) {
-                    initialStep = target;
+                    setCurrentStep(target);
                 } else {
-                    initialStep = stepStatus.activeStepIndex || 1;
+                    setCurrentStep(stepStatus.activeStepIndex || 1);
                 }
             } else if (stepStatus.applicationStatus === 'CORRECTION_REQUIRED') {
                 const keyMap = { 1: 'admission', 2: 'personal', 3: 'parent', 4: 'address', 5: 'academic', 6: 'documents' };
                 const requested = stepStatus.correctionRequestedSections || [];
-                initialStep = [1, 2, 3, 4, 5, 6].find(i => requested.includes(keyMap[i])) || 1;
-            } else if (formData.id || stepStatus.activeStepIndex) {
-                initialStep = stepStatus.activeStepIndex || 2;
+                const firstCorrectionStep = [1, 2, 3, 4, 5, 6].find(i => requested.includes(keyMap[i])) || 1;
+                setCurrentStep(firstCorrectionStep);
+            } else if (formData.id) {
+                setCurrentStep(stepStatus.activeStepIndex || 2);
             }
-            
-            setCurrentStep(initialStep);
-            setIsStepInitialized(true);
         }
-    }, [statusLoading, stepStatus, formData.id, isStepInitialized, isStepAccessible]);
+    }, [statusLoading, stepStatus, formData.id, isStepAccessible]);
 
     // Save current step draft to localStorage
     useEffect(() => {
@@ -574,22 +568,18 @@ const AdmissionForm = () => {
                         <span className="px-2 py-0.5 bg-primary-50 text-primary-700 rounded text-xs font-semibold">Admission Session {formData?.academicYear || getAcademicYear()}</span>
                     </div>
                 </div>
-                <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-6 w-full sm:w-auto">
+                <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto">
                     <button
                         onClick={() => navigate('/admission/dashboard')}
-                        className="btn-secondary flex-1 sm:flex-none text-xs sm:text-sm flex items-center justify-center gap-1.5 py-2 px-3 min-h-[48px] sm:min-h-[38px] font-bold"
+                        className="btn-secondary text-xs sm:text-sm flex items-center gap-1.5 py-2 px-3 min-h-[38px]"
                     >
                         <ChevronLeft size={16} />
-                        <span className="sm:hidden">Back</span>
-                        <span className="hidden sm:inline">Back to Portal</span>
+                        Back to Portal
                     </button>
-                    <div className="flex-1 flex flex-col items-center justify-center text-center min-w-0 px-1">
-                        <p className="text-[9px] sm:text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
-                            <span className="sm:hidden">Progress</span>
-                            <span className="hidden sm:inline">Admission Progress</span>
-                        </p>
-                        <div className="flex items-center gap-1.5 sm:gap-2 justify-center w-full mt-0.5">
-                            <div className="w-10 sm:w-20 bg-slate-100 rounded-full h-1.5 overflow-hidden shrink-0">
+                    <div className="text-center sm:text-right">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Admission Progress</p>
+                        <div className="flex items-center gap-2 justify-center sm:justify-end">
+                            <div className="w-16 sm:w-20 bg-slate-100 rounded-full h-1.5 overflow-hidden">
                                 <div
                                     className="h-full rounded-full transition-all duration-700"
                                     style={{
@@ -600,27 +590,17 @@ const AdmissionForm = () => {
                                     }}
                                 ></div>
                             </div>
-                            <p className="text-[10px] sm:text-sm font-bold text-primary-700">{completedCount}/{totalSteps}</p>
+                            <p className="text-xs sm:text-sm font-bold text-primary-700">{completedCount}/{totalSteps}</p>
                         </div>
                     </div>
                     <button
                         type="button"
                         onClick={handleTopNextClick}
                         disabled={loading}
-                        className="btn-primary flex-1 sm:flex-none text-xs sm:text-sm flex items-center justify-center gap-1 py-2 px-3 sm:px-4 min-h-[48px] sm:min-h-[38px] font-bold shadow-md shadow-primary-600/10 whitespace-nowrap"
+                        className="btn-primary text-xs sm:text-sm flex items-center gap-1 py-2 px-4 min-h-[38px] font-bold shadow-md shadow-primary-600/10 whitespace-nowrap"
                     >
                         {currentStep === 7 ? (
-                            stepStatus?.applicationStatus === 'CORRECTION_REQUIRED' ? (
-                                <>
-                                    <span className="sm:hidden">Submit</span>
-                                    <span className="hidden sm:inline">Submit Corrections</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span className="sm:hidden">Submit</span>
-                                    <span className="hidden sm:inline">Final Submit</span>
-                                </>
-                            )
+                            stepStatus?.applicationStatus === 'CORRECTION_REQUIRED' ? 'Submit Corrections' : 'Final Submit'
                         ) : (
                             <>Next <ChevronRight size={16} /></>
                         )}
