@@ -37,7 +37,6 @@ import useApplicationStatus from '../../hooks/useApplicationStatus';
 import StatusBadge from '../../components/StatusBadge';
 import ActivityTimeline from '../../components/ActivityTimeline';
 import Skeleton, { CardSkeleton } from '../../components/Skeleton';
-import { downloadAdmissionPDF } from '../../utils/pdfGenerator';
 
 const StudentDashboard = () => {
     const { logout } = useAuth();
@@ -546,11 +545,6 @@ const SubmittedDashboard = ({ stepStatus, applicationStatus, timeline, navigate,
     const isRejected = applicationStatus === 'REJECTED';
     const isCancelled = applicationStatus === 'CANCELLED';
 
-    const handleDownloadPDF = async () => {
-        console.log("DOWNLOAD BUTTON CLICKED (StudentDashboard)");
-        await downloadAdmissionPDF(api, toast);
-    };
-
     return (
         <div className="animate-fade-in space-y-8 pb-16 max-w-4xl mx-auto">
             {/* Header */}
@@ -681,26 +675,6 @@ const SubmittedDashboard = ({ stepStatus, applicationStatus, timeline, navigate,
                                 </div>
                                 <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-primary-600 transition-colors" />
                             </button>
-
-                            {(isApproved || !isRejected) && (
-                                <button
-                                    onClick={handleDownloadPDF}
-                                    className="w-full bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-primary-200 transition-all group"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                        <Download size={22} />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="font-bold text-slate-900 text-sm">
-                                            {isApproved ? 'Download Confirmed Admission' : 'Download PDF'}
-                                        </p>
-                                        <p className="text-xs text-slate-400">{isApproved ? 'Your confirmed admission as a PDF' : 'Get a copy of your application'}</p>
-                                    </div>
-                                    <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-blue-600 transition-colors" />
-                                </button>
-                            )}
-
-
 
                             {applicationStatus === 'ENROLLED' && (
                                 <button

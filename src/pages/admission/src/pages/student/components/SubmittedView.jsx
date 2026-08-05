@@ -5,7 +5,6 @@ import {
     Clock,
     XCircle,
     FileText,
-    Download,
     Eye,
     ArrowLeft,
     ShieldCheck,
@@ -22,7 +21,7 @@ import Step7Review from '../form-steps/Step7Review';
 import ActivityTimeline from '../../../components/ActivityTimeline';
 import StatusBadge from '../../../components/StatusBadge';
 
-const SubmittedView = ({ statusData, fullDetails, onDownloadPDF }) => {
+const SubmittedView = ({ statusData, fullDetails }) => {
     const navigate = useNavigate();
     const [viewMode, setViewMode] = useState('DASHBOARD');
 
@@ -144,16 +143,6 @@ const SubmittedView = ({ statusData, fullDetails, onDownloadPDF }) => {
                     <ArrowLeft size={16} />
                     Back to Dashboard
                 </button>
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={onDownloadPDF}
-                        className="btn-download-pdf px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md hover:bg-primary-700"
-                    >
-                        <Download size={14} />
-                        Download PDF
-                    </button>
-                </div>
             </div>
 
             {/* ═══ STATUS BANNER ═══ */}
@@ -320,7 +309,7 @@ const SubmittedView = ({ statusData, fullDetails, onDownloadPDF }) => {
                         </h3>
                         <p className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
                             {isApproved
-                                ? 'Download your confirmed admission application as a PDF and carry it when visiting the college.'
+                                ? 'Your admission is confirmed. Please visit the college for further enrollment formalities.'
                                 : isRejected
                                     ? 'Contact the admissions office for clarification or guidance on reapplication.'
                                     : 'Your application is being processed. Keep a copy of your acknowledgment for verification.'
@@ -337,16 +326,6 @@ const SubmittedView = ({ statusData, fullDetails, onDownloadPDF }) => {
                             <Eye size={18} />
                             View Application
                         </button>
-                        {(isApproved || !isRejected) && (
-                            <button
-                                type="button"
-                                onClick={onDownloadPDF}
-                                className="btn-download-pdf w-full sm:w-auto h-12 sm:h-14 px-6 bg-white text-slate-900 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 text-xs sm:text-sm font-bold shadow-2xl transition-all"
-                            >
-                                <Download size={18} />
-                                {isApproved ? 'Download Confirmed Admission' : 'Download PDF'}
-                            </button>
-                        )}
                     </div>
                 </div>
             </div>

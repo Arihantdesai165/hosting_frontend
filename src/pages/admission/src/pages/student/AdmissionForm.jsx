@@ -26,7 +26,6 @@ import Step7Review from './form-steps/Step7Review';
 import SubmittedView from './components/SubmittedView';
 import LoadingContainer from '../../components/LoadingContainer';
 import { FormSkeleton } from '../../components/Skeleton';
-import { downloadAdmissionPDF } from '../../utils/pdfGenerator';
 
 const STEPS = [
     { id: 1, label: 'Admission' },
@@ -419,11 +418,6 @@ const AdmissionForm = () => {
         setFormData((prev) => ({ ...prev, ...processed }));
     };
 
-    const handleDownloadPDF = async () => {
-        console.log("DOWNLOAD BUTTON CLICKED (AdmissionForm)");
-        await downloadAdmissionPDF(api, toast);
-    };
-
 
     const getIsStepReadOnly = (stepIndex) => {
         if (!stepStatus) return true;
@@ -488,7 +482,6 @@ const AdmissionForm = () => {
                 <SubmittedView 
                     statusData={stepStatus} 
                     fullDetails={fullDetails} 
-                    onDownloadPDF={handleDownloadPDF} 
                 />
             </div>
         );

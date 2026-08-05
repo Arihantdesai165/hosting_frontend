@@ -12,7 +12,6 @@ import {
     GraduationCap,
     Edit3,
     FileText,
-    Download,
     AlertCircle,
     ArrowRight,
     Camera,
@@ -20,7 +19,6 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { downloadAdmissionPDF } from '../../../utils/pdfGenerator';
 
 const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null, applicationStatus }) => {
     const [loading, setLoading] = useState(!externalDetails);
@@ -75,10 +73,6 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
         }
     };
 
-    const handleDownloadPDF = async () => {
-        console.log("DOWNLOAD BUTTON CLICKED (Step7Review)");
-        await downloadAdmissionPDF(api, toast);
-    };
 
     const handleEdit = (stepNumber) => {
         let target = stepNumber;
@@ -139,15 +133,8 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
 
                     <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row gap-4">
                         <button
-                            onClick={handleDownloadPDF}
-                            className="flex-1 bg-primary-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98]"
-                        >
-                            <Download size={20} />
-                            Download PDF
-                        </button>
-                        <button
                             onClick={() => navigate('/admission/dashboard')}
-                            className="flex-1 bg-white border border-slate-200 text-slate-700 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+                            className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98]"
                         >
                             <ArrowRight size={20} />
                             Back to Dashboard
