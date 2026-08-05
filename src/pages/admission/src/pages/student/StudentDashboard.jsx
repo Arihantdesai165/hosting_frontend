@@ -547,6 +547,7 @@ const SubmittedDashboard = ({ stepStatus, applicationStatus, timeline, navigate,
     const isCancelled = applicationStatus === 'CANCELLED';
 
     const handleDownloadPDF = async () => {
+        console.log("DOWNLOAD BUTTON CLICKED (StudentDashboard)");
         await downloadAdmissionPDF(api, toast);
     };
 

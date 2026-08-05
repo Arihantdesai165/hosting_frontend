@@ -76,6 +76,7 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
     };
 
     const handleDownloadPDF = async () => {
+        console.log("DOWNLOAD BUTTON CLICKED (Step7Review)");
         await downloadAdmissionPDF(api, toast);
     };
 

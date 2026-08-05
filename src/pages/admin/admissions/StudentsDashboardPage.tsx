@@ -224,6 +224,7 @@ export const StudentsDashboardPage: React.FC<StudentsDashboardPageProps> = ({ re
   };
 
   const handleDownloadPDF = async (id: string) => {
+    console.log("DOWNLOAD BUTTON CLICKED (StudentsDashboardPage)");
     await downloadAdmissionPDF(API, toast, id);
   };
 

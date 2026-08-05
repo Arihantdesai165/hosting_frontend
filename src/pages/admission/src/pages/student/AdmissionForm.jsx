@@ -426,6 +426,7 @@ const AdmissionForm = () => {
     };
 
     const handleDownloadPDF = async () => {
+        console.log("DOWNLOAD BUTTON CLICKED (AdmissionForm)");
         await downloadAdmissionPDF(api, toast);
     };
 

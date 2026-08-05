@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
  * Generates and downloads a clean, multi-page PDF using html2canvas and jsPDF.
  */
 export const downloadAdmissionPDF = async (api, toast, applicationId = null) => {
+    console.log("generatePDF START");
     const toastId = toast.loading('Preparing your admission document…');
     try {
         // Fetch full application details
@@ -36,13 +37,14 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         const signatureUrl = docs.signatureUrl ? buildFileUrl(docs.signatureUrl) : '';
         const logoUrl = absoluteLogoUrl;
 
-        // Trace data flow logs
+        // Trace data flow logs (Task 3)
         console.log("Application:", details);
-        console.log("Personal:", pd);
-        console.log("Parent:", par);
-        console.log("Address:", addr);
-        console.log("Academic:", acad);
-        console.log("Documents:", docs);
+        console.log("Personal section", pd);
+        console.log("Parent section", par);
+        console.log("Address section", addr);
+        console.log("Academic section", acad);
+        console.log("acad =", acad);
+        console.log("Documents section", docs);
 
         const isImageUrl = (url) => {
             if (!url) return false;
@@ -357,7 +359,7 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                             <tr><td class="label">Register Number</td><td class="value">${acad?.tenthRegisterNumber || acad?.sslcRegisterNumber || '—'}</td></tr>
                             <tr><td class="label">Year of Passing</td><td class="value">${acad?.tenthPassingYear || acad?.sslcYear || '—'}</td></tr>
                             <tr><td class="label">Obtained / Max Marks</td><td class="value">${(acad?.tenthMarksObtained || acad?.tenthObtainedMarks) ? `${acad?.tenthMarksObtained || acad?.tenthObtainedMarks} / ${acad?.tenthMaxMarks || '—'}` : '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad?.tenthPercentage ? `${acad.tenthPercentage}%` : '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.tenthPercentage ? `${acad?.tenthPercentage}%` : '—'}</td></tr>
                             ${showPUC ? `
                             <tr><td colspan="2" class="subheader">PUC / 12th Standard</td></tr>
                             <tr><td class="label">College / Institution</td><td class="value">${acad?.twelfthCollege || acad?.twelfthSchool || '—'}</td></tr>
@@ -365,15 +367,15 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                             <tr><td class="label">Stream</td><td class="value">${acad?.twelfthStream || '—'}</td></tr>
                             <tr><td class="label">Register Number</td><td class="value">${acad?.twelfthRegisterNumber || '—'}</td></tr>
                             <tr><td class="label">Year of Passing</td><td class="value">${acad?.twelfthPassingYear || '—'}</td></tr>
-                            <tr><td class="label">Obtained / Max Marks</td><td class="value">${acad?.twelfthObtainedMarks ? `${acad.twelfthObtainedMarks} / ${acad?.twelfthMaxMarks || '—'}` : '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad?.twelfthPercentage ? `${acad.twelfthPercentage}%` : '—'}</td></tr>
+                            <tr><td class="label">Obtained / Max Marks</td><td class="value">${acad?.twelfthObtainedMarks ? `${acad?.twelfthObtainedMarks} / ${acad?.twelfthMaxMarks || '—'}` : '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.twelfthPercentage ? `${acad?.twelfthPercentage}%` : '—'}</td></tr>
                             ` : ''}
                             ${showDiploma ? `
                             <tr><td colspan="2" class="subheader">Diploma Details (Lateral Entry)</td></tr>
                             <tr><td class="label">University / Board</td><td class="value">${acad?.diplomaUniversity || '—'}</td></tr>
                             <tr><td class="label">Branch / Stream</td><td class="value">${acad?.diplomaBranch || '—'}</td></tr>
                             <tr><td class="label">Year of Passing</td><td class="value">${acad?.diplomaYear || acad?.diplomaPassingYear || '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad?.diplomaPercentage ? `${acad.diplomaPercentage}%` : '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.diplomaPercentage ? `${acad?.diplomaPercentage}%` : '—'}</td></tr>
                             ` : ''}
                             ${(acad?.cetRank || acad?.entranceRank) ? `
                             <tr><td colspan="2" class="subheader">Entrance Examination</td></tr>
@@ -607,5 +609,6 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         toast.dismiss(toastId);
         console.error("PDF generation failed:", error);
         toast.error('Failed to generate admission PDF: ' + (error.response?.data?.message || error.message));
+        throw error;
     }
 };
