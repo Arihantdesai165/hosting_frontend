@@ -15,6 +15,7 @@ export interface UserSession {
 
 class AuthService {
   async login(email: string, password: string): Promise<UserSession> {
+    console.log("API Base URL:", API.defaults.baseURL);
     const response = await API.post('/auth/login', { email, password });
     const { token, user } = response.data.data;
     
@@ -24,7 +25,23 @@ class AuthService {
     return user;
   }
 
+  async loginDirect(data: any): Promise<any> {
+    console.log("API Base URL:", API.defaults.baseURL);
+    return await API.post('/auth/login', data);
+  }
+
+  async register(data: any): Promise<any> {
+    console.log("API Base URL:", API.defaults.baseURL);
+    return await API.post('/auth/register', data);
+  }
+
+  async checkPhone(phone: string): Promise<any> {
+    console.log("API Base URL:", API.defaults.baseURL);
+    return await API.post('/auth/check-phone', { phone });
+  }
+
   async changePassword(oldPassword: string, newPassword: string): Promise<UserSession> {
+    console.log("API Base URL:", API.defaults.baseURL);
     const response = await API.post('/auth/change-password', { oldPassword, newPassword });
     const { token, user } = response.data.data;
     
@@ -36,6 +53,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
+      console.log("API Base URL:", API.defaults.baseURL);
       await API.post('/auth/logout');
     } catch (error) {
       console.error('Logout error:', error);

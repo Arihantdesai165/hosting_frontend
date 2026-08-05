@@ -30,7 +30,7 @@ import {
     Award,
     RefreshCw
 } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../../../../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import useApplicationStatus from '../../hooks/useApplicationStatus';

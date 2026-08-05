@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess, logout as reduxLogout } from '../../../../store/authSlice';
 import authService from '../../../../services/auth.service';
-import api from '../api/axios';
+import api from '../../../../services/api';
 
 const AuthContext = createContext(null);
 

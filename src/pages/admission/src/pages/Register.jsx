@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Phone, Loader2, Eye, EyeOff, GraduationCap, User, ArrowRight, ShieldCheck, KeyRound, RefreshCw, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import api from '../api/axios';
+import api from '../../../../services/api';
+import authService from '../../../../services/auth.service';
 import { useAuth } from '../context/AuthContext';
 import { registerSchema } from '../../../../utils/validation.util';
 import { getAcademicYear } from '../../../../utils/date.util';
@@ -65,7 +66,7 @@ const Register = () => {
             setPhoneError('');
 
             try {
-                const res = await api.post('/auth/check-phone', { phone: val });
+                const res = await authService.checkPhone(val);
                 if (res.data.exists) {
                     setPhoneError('This mobile number is already registered.');
                 } else {
@@ -130,7 +131,7 @@ const Register = () => {
 
         setLoading(true);
         try {
-            const registerRes = await api.post('/auth/register', {
+            const registerRes = await authService.register({
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 email: formData.email,

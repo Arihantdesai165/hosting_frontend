@@ -11,7 +11,7 @@ import {
     AlertTriangle,
     CheckCircle2
 } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../../../../services/api';
 import toast from 'react-hot-toast';
 import StepIndicator from '../../components/StepIndicator';
 import useApplicationStatus from '../../hooks/useApplicationStatus';

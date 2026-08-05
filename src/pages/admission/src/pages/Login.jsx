@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Loader2, Eye, EyeOff, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
-import api from '../api/axios';
+import authService from '../../../../services/auth.service';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -35,7 +35,7 @@ const Login = () => {
 
         setLoading(true);
         try {
-            const response = await api.post('/auth/login', formData);
+            const response = await authService.loginDirect(formData);
             if (response.data.success) {
                 const { token, user } = response.data.data;
                 toast.success('Login successful!');

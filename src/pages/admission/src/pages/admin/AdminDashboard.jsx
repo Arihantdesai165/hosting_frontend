@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import api from '../../../../../services/api';
 import { 
     Users, Clock, CheckCircle2, XCircle, Eye, 
     GraduationCap, TrendingUp, BarChart3, Loader2, RefreshCw

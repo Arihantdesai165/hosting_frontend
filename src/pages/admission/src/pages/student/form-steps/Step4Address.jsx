@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../../api/axios';
+import api from '../../../../../../services/api';
 import { Loader2, ChevronLeft, ChevronRight, Home, MapPin, Check } from 'lucide-react';
 import SelectDropdown from '../../../components/SelectDropdown';
 import toast from 'react-hot-toast';

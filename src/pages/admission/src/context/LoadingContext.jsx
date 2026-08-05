@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { registerLoadingCallbacks } from '../api/axios';
+import { registerLoadingCallbacks } from '../../../../services/api';
 
 const LoadingContext = createContext(null);
 

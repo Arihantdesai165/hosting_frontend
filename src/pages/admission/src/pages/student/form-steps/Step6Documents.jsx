@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../../../api/axios';
+import api from '../../../../../../services/api';
 import { Loader2, UploadCloud, CheckCircle, FileText, User, Image, ClipboardIcon, ChevronLeft, ChevronRight, GraduationCap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { compressDocumentImage, validateImageType } from '../../../utils/imageCompressor';

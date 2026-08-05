@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../../../api/axios';
+import api from '../../../../../../services/api';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 

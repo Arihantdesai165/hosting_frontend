@@ -5,6 +5,14 @@ import { forceLogout } from '../utils/auth.utils';
 
 console.log("API URL =", import.meta.env.VITE_API_URL);
 
+let startLoadingCallback: () => void = () => {};
+let stopLoadingCallback: () => void = () => {};
+
+export const registerLoadingCallbacks = (start: () => void, stop: () => void) => {
+  startLoadingCallback = start;
+  stopLoadingCallback = stop;
+};
+
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
@@ -16,6 +24,7 @@ const API = axios.create({
 // Request interceptor to add Authorization token
 API.interceptors.request.use(
   (config) => {
+    startLoadingCallback();
     if (store && typeof store.dispatch === 'function') {
       store.dispatch(startLoading());
     }
@@ -26,6 +35,7 @@ API.interceptors.request.use(
     return config;
   },
   (error) => {
+    stopLoadingCallback();
     if (store && typeof store.dispatch === 'function') {
       store.dispatch(stopLoading());
     }
@@ -36,12 +46,14 @@ API.interceptors.request.use(
 // Response interceptor to handle token expiry / unauthenticated requests
 API.interceptors.response.use(
   (response) => {
+    stopLoadingCallback();
     if (store && typeof store.dispatch === 'function') {
       store.dispatch(stopLoading());
     }
     return response;
   },
   async (error) => {
+    stopLoadingCallback();
     if (store && typeof store.dispatch === 'function') {
       store.dispatch(stopLoading());
     }

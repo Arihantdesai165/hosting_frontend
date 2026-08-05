@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/authSlice';
 import authService from '../../services/auth.service';
+import API from '../../services/api';
 import { RootState } from '../../store';
 import { getAcademicYear } from '../../utils/date.util';
 import {
@@ -70,9 +71,9 @@ export const AdminLayout: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('/api/system/config')
-      .then(res => res.json())
-      .then(json => {
+    API.get('/system/config')
+      .then(res => {
+        const json = res.data;
         if (json.success && json.data?.features) {
           setFeatures(json.data.features);
         }

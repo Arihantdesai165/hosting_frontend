@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import api from '../../../../../services/api';
 import { Search, Eye, Filter, ChevronLeft, ChevronRight, Loader2, Users } from 'lucide-react';
 
 const STATUSES = ['All', 'DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'ENROLLED'];
