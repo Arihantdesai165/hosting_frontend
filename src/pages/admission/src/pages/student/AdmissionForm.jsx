@@ -430,8 +430,7 @@ const AdmissionForm = () => {
             if (!res.data.success) throw new Error('Failed to load latest details');
             const details = res.data.data;
 
-            const pd = details?.studentpersonaldetails || {};
-            const docs = details?.studentdocuments || {};
+            const docs = details?.studentdocuments || details?.documents || {};
             const branch = details?.branch || {};
             const user = details?.user || {};
             const par = details?.studentparentdetails || {};
@@ -453,11 +452,37 @@ const AdmissionForm = () => {
             const signatureUrl = docs.signatureUrl ? getDocUrl(docs.signatureUrl) : '';
             const logoUrl = absoluteLogoUrl;
 
-            console.log({
-                logoUrl,
-                photoUrl,
-                signatureUrl
-            });
+            // Trace data flow logs (Step 3)
+            console.log("application", details);
+            console.log("application.documents", details?.studentdocuments || details?.documents);
+            console.log("photo", photoUrl);
+            console.log("signature", signatureUrl);
+            console.log("logo", logoUrl);
+            console.log("photoUrl", photoUrl);
+            console.log("signatureUrl", signatureUrl);
+            console.log("logoUrl", logoUrl);
+
+            const isImageUrl = (url) => {
+                if (!url) return false;
+                const cleanUrl = url.split('?')[0].toLowerCase();
+                return cleanUrl.endsWith('.jpg') || cleanUrl.endsWith('.jpeg') || cleanUrl.endsWith('.png') || cleanUrl.endsWith('.webp') || cleanUrl.endsWith('.gif');
+            };
+
+            const documentList = [
+                { label: '10th / SSLC Marks Card', url: docs.tenthMarksheetUrl ? getDocUrl(docs.tenthMarksheetUrl) : '' },
+                { label: '12th / PUC Marks Card', url: docs.twelfthMarksheetUrl ? getDocUrl(docs.twelfthMarksheetUrl) : '' },
+                { label: 'Diploma 5th Sem Marks Card', url: docs.diplomaSemester5MarksheetUrl ? getDocUrl(docs.diplomaSemester5MarksheetUrl) : '' },
+                { label: 'Diploma 6th Sem Marks Card', url: docs.diplomaSemester6MarksheetUrl ? getDocUrl(docs.diplomaSemester6MarksheetUrl) : '' },
+                { label: 'CET Score Card', url: docs.cetScoreCardUrl ? getDocUrl(docs.cetScoreCardUrl) : '' },
+                { label: 'Aadhaar Card', url: docs.aadhaarUrl ? getDocUrl(docs.aadhaarUrl) : '' },
+                { label: 'Caste Certificate', url: docs.casteCertificateUrl ? getDocUrl(docs.casteCertificateUrl) : '' },
+                { label: 'Domicile Certificate', url: docs.domicileCertificateUrl ? getDocUrl(docs.domicileCertificateUrl) : '' },
+                { label: 'Gap Certificate', url: docs.gapCertificateUrl ? getDocUrl(docs.gapCertificateUrl) : '' },
+                { label: 'Fees Paid Receipt', url: docs.feesPaidReceiptUrl ? getDocUrl(docs.feesPaidReceiptUrl) : '' },
+                { label: 'Admission Fee Receipt', url: docs.admissionFeeReceiptUrl ? getDocUrl(docs.admissionFeeReceiptUrl) : '' }
+            ];
+
+            const imageDocs = documentList.filter(d => d.url && isImageUrl(d.url));
 
             const preloadImage = (url) => {
                 return new Promise((resolve) => {
@@ -466,6 +491,7 @@ const AdmissionForm = () => {
                         return;
                     }
                     const img = new Image();
+                    img.crossOrigin = 'anonymous';
                     img.onload = () => resolve(true);
                     img.onerror = () => resolve(false);
                     img.src = url;
@@ -475,12 +501,22 @@ const AdmissionForm = () => {
             let logoLoaded = false;
             let photoLoaded = false;
             let signatureLoaded = false;
+            const loadedImageDocs = {};
 
-            await Promise.all([
+            const preloads = [
                 preloadImage(logoUrl).then(res => logoLoaded = res),
                 preloadImage(photoUrl).then(res => photoLoaded = res),
                 preloadImage(signatureUrl).then(res => signatureLoaded = res)
-            ]);
+            ];
+
+            imageDocs.forEach(d => {
+                preloads.push(preloadImage(d.url).then(res => {
+                    loadedImageDocs[d.label] = { url: d.url, loaded: res };
+                    return res;
+                }));
+            });
+
+            await Promise.all(preloads);
 
             const q = (details?.qualification || '').toUpperCase();
             const showPUC = q === 'PUC' || (!q && details?.admissionType === 'KCET');
@@ -559,11 +595,11 @@ const AdmissionForm = () => {
                     </style>
                 </head>
                 <body>
-                    <div class="watermark">${logoLoaded ? `<img src="${logoUrl}" alt="" />` : ''}</div>
+                    <div class="watermark">${logoLoaded ? `<img src="${logoUrl}" alt="" crossOrigin="anonymous" />` : ''}</div>
                     <div class="application-form">
                         <div class="header">
                             <div class="header-top">
-                                <div class="logo-box">${logoLoaded ? `<img src="${logoUrl}" alt="JCER Logo" />` : `<span style="font-size:8px;">Logo Not Loaded</span>`}</div>
+                                <div class="logo-box">${logoLoaded ? `<img src="${logoUrl}" alt="JCER Logo" crossOrigin="anonymous" />` : `<span style="font-size:8px;">Logo Not Loaded</span>`}</div>
                                 <div class="header-text">
                                     <h1>JAIN COLLEGE OF ENGINEERING AND RESEARCH</h1>
                                     <p style="font-size:8px;color:#475569;">(Approved by AICTE, New Delhi, Affiliated to VTU Belagavi &amp; Recognized by Govt. of Karnataka)</p>
@@ -571,7 +607,7 @@ const AdmissionForm = () => {
                                     <p>Academic Session ${details?.academicYear || formData?.academicYear || getAcademicYear()}</p>
                                 </div>
                                 <div class="photo-box">
-                                    ${photoUrl ? (photoLoaded ? `<img src="${photoUrl}" alt="Passport Photo" />` : `<span class="photo-placeholder" style="color:red;">Passport Photo<br>Not Available</span>`) : `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`}
+                                    ${photoUrl ? (photoLoaded ? `<img src="${photoUrl}" alt="Passport Photo" crossOrigin="anonymous" />` : `<span class="photo-placeholder" style="color:red;">Passport Photo<br>Not Available</span>`) : `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`}
                                 </div>
                             </div>
                             <div class="header-bottom">
@@ -656,7 +692,7 @@ const AdmissionForm = () => {
                                 <div class="signature-label">Date &amp; Place</div>
                             </div>
                             <div class="signature-item">
-                                ${signatureUrl ? (signatureLoaded ? `<img class="signature-img" src="${signatureUrl}" alt="Signature" />` : `<span style="font-size: 8px; color: red; display: block; margin-bottom: 5px;">Signature Not Loaded</span>`) : `<span style="font-size: 8px; color: #999; display: block; margin-bottom: 5px;">Signature Not Uploaded</span>`}
+                                ${signatureUrl ? (signatureLoaded ? `<img class="signature-img" src="${signatureUrl}" alt="Signature" crossOrigin="anonymous" />` : `<span style="font-size: 8px; color: red; display: block; margin-bottom: 5px;">Signature Not Loaded</span>`) : `<span style="font-size: 8px; color: #999; display: block; margin-bottom: 5px;">Signature Not Uploaded</span>`}
                                 <div class="signature-line"></div>
                                 <div class="signature-label">Applicant Signature</div>
                             </div>
@@ -666,10 +702,43 @@ const AdmissionForm = () => {
                             <div style="border-top:1px solid #dde1e8;margin:5px 0;"></div>
                             <p>Contact: 099448693987 | principal@jcer.in</p>
                         </div>
+
+                        ${imageDocs.length > 0 ? `
+                        <div class="section" style="page-break-before: always; break-before: always; margin-top: 20px;">
+                            <div class="section-title">SUPPORTING DOCUMENTS</div>
+                            <div class="section-content" style="border: none;">
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 15px;">
+                                    ${imageDocs.map(d => {
+                                        const item = loadedImageDocs[d.label];
+                                        if (item && item.loaded) {
+                                            return `
+                                                <div style="break-inside: avoid; page-break-inside: avoid; border: 1px solid #dde1e8; padding: 15px; background: white; text-align: center;">
+                                                    <h3 style="font-size: 11pt; color: #1a3c6e; margin-bottom: 10px; border-bottom: 2px solid #1a3c6e; display: inline-block; padding-bottom: 3px;">${d.label}</h3>
+                                                    <div style="max-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 5px;">
+                                                        <img src="${d.url}" alt="${d.label}" crossOrigin="anonymous" style="max-width: 100%; max-height: 380px; object-fit: contain;" />
+                                                    </div>
+                                                </div>
+                                            `;
+                                        } else {
+                                            return `
+                                                <div style="break-inside: avoid; page-break-inside: avoid; border: 1.5px dashed #f87171; padding: 15px; background: #fff5f5; text-align: center; color: #b91c1c;">
+                                                    <h3 style="font-size: 11pt; margin-bottom: 5px;">${d.label}</h3>
+                                                    <p style="font-size: 9pt;">Document Image Failed to Load</p>
+                                                </div>
+                                            `;
+                                        }
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
                 </body>
                 </html>
             `;
+
+            // Log the final printed HTML (Step 4)
+            console.log("printHTML", printHTML);
 
             toast.dismiss(toastId);
             const printWindow = window.open('', '_blank');
