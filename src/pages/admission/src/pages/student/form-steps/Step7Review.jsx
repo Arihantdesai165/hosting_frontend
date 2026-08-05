@@ -15,7 +15,6 @@ import {
     Download,
     AlertCircle,
     ArrowRight,
-    Camera,
     Printer
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -89,13 +88,6 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
         }
         localStorage.setItem('admission_form_step', target.toString());
         setTimeout(() => window.location.reload(), 50);
-    };
-
-    const getPhotoUrl = (path) => {
-        const resolved = buildFileUrl(path);
-        console.log("Original:", path);
-        console.log("Resolved:", resolved);
-        return resolved;
     };
 
     if (loading) {
@@ -247,22 +239,6 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
                         </div>
 
                         <div className="flex items-center gap-4 sm:gap-5 bg-white/5 backdrop-blur-sm p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-white/10">
-                            <div className="relative group shrink-0">
-                                <div className="size-16 sm:size-20 rounded-full border-4 border-white/20 overflow-hidden bg-white/10 flex items-center justify-center transition-all duration-500 group-hover:border-primary-400 shadow-xl">
-                                    {docs.photoUrl ? (
-                                        <img
-                                            src={getPhotoUrl(docs.photoUrl)}
-                                            alt="Profile"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <User size={28} className="text-white/40" />
-                                    )}
-                                </div>
-                                <div className="absolute -bottom-1 -right-1 bg-primary-500 text-white p-1 sm:p-1.5 rounded-full shadow-lg">
-                                    <Camera size={10} />
-                                </div>
-                            </div>
                             <div className="text-left md:text-right min-w-0">
                                 <p className="text-base sm:text-xl font-bold leading-tight uppercase tracking-tight truncate">
                                     {applicantName || 'Guest Applicant'}
@@ -379,7 +355,6 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
                     </ReviewSection>
 
                     <ReviewSection icon={FileText} title="Attached Documents" step={6}>
-                        <DataItem label="Photo" value={docs.photoUrl ? '✅ Uploaded' : '❌ Missing'} />
                         <DataItem label="Signature" value={docs.signatureUrl ? '✅ Uploaded' : '❌ Missing'} />
                         <DataItem label="10th Marksheet" value={docs.tenthMarksheetUrl ? '✅ Uploaded' : '❌ Missing'} />
                         {details.qualification === 'DIPLOMA' ? (

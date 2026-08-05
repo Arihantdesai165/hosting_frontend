@@ -1393,7 +1393,6 @@ export const StudentsDashboardPage: React.FC<StudentsDashboardPageProps> = ({ re
                     
                     <div className="divide-y divide-neutral-100 dark:divide-neutral-800/40">
                       {[
-                        { label: 'Photo', key: 'photoUrl', field: 'photo' },
                         { label: 'Aadhaar copy', key: 'aadhaarUrl', field: 'aadhaar' },
                         { label: '10th / SSLC Marks Card', key: 'tenthMarksheetUrl', field: 'tenthMarksheet' },
                         { label: '12th / PUC Marks Card', key: 'twelfthMarksheetUrl', field: 'twelfthMarksheet' },

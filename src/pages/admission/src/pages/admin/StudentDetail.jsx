@@ -293,7 +293,6 @@ const StudentDetail = () => {
                 <Section title="Documents" icon={FileText}>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         {[
-                            { key: 'photoUrl', label: 'Passport Photo' },
                             { key: 'signatureUrl', label: 'Signature' },
                             { key: 'tenthMarksheetUrl', label: '10th Marksheet' },
                             { key: 'twelfthMarksheetUrl', label: '12th Marksheet' },

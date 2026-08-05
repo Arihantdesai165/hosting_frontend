@@ -173,7 +173,6 @@ export const StudentEnrollmentPage: React.FC<StudentEnrollmentPageProps> = ({ de
     if (!d) return [];
     const isLateral = app.qualification === 'DIPLOMA' || (!app.qualification && app.admissionType === 'DCET');
     return [
-      { label: 'Passport Photo',      url: d.photoUrl },
       { label: 'Signature',           url: d.signatureUrl },
       { label: '10th Marksheet',      url: d.tenthMarksheetUrl },
       ...(isLateral ? [

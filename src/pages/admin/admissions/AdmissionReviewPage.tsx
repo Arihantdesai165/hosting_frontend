@@ -79,7 +79,6 @@ const getMissingFields = (app: AdmissionApplication | null) => {
   }
 
   // Documents
-  if (!docs?.photoUrl) missing.push("Documents: Passport Photo");
   if (!docs?.signatureUrl) missing.push("Documents: Candidate Signature");
   if (!docs?.tenthMarksheetUrl) missing.push("Documents: 10th/SSLC Marksheet");
   if (showDiploma) {
@@ -618,20 +617,7 @@ export const AdmissionReviewPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Student Avatar (prominently displayed at the top right of the form like a physical photo) */}
-          <div className="flex flex-col items-center shrink-0">
-            <div className="w-28 h-36 border-2 border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center shadow-md relative">
-              {profilePhotoUrl ? (
-                <img src={profilePhotoUrl} alt="applicant-passport" className="w-full h-full object-cover" />
-              ) : (
-                <div className="text-center p-2 text-neutral-400 dark:text-neutral-500">
-                  <User size={36} className="mx-auto mb-1 opacity-40" />
-                  <span className="text-[10px] font-bold block uppercase tracking-wider">Passport Photo</span>
-                </div>
-              )}
-            </div>
-            <span className="text-[9px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mt-2">Affixed Photo</span>
-          </div>
+
         </div>
 
         {/* ─── SECTION 1: Personal Profile ─── */}
@@ -855,7 +841,6 @@ export const AdmissionReviewPage: React.FC = () => {
           {docs ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
               {[
-                { label: 'Passport Size Photo', field: 'photo', url: docs.photoUrl },
                 { label: 'Candidate E-Signature', field: 'signature', url: docs.signatureUrl },
                 { label: 'SSLC / 10th Marks Card', field: 'tenthMarksheet', url: docs.tenthMarksheetUrl },
                 ...(showDiploma ? [

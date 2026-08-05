@@ -253,7 +253,6 @@ export const DocumentVerificationWorkspaceContent: React.FC<DocumentVerification
         console.log("Document initialization started. Setting current document index to 0.");
 
         const allPossibleDocs = [
-          { id: 'photo', field: 'photo', name: 'Passport Size Photo', url: extractDocUrl(safeDocs, ['photoUrl', 'photo', 'passportPhoto', 'passportPhotoUrl']) },
           { id: 'signature', field: 'signature', name: 'Candidate E-Signature', url: extractDocUrl(safeDocs, ['signatureUrl', 'signature', 'candidateSignature']) },
           { id: 'tenth', field: 'tenthMarksheet', name: 'SSLC / 10th Marks Card', url: extractDocUrl(safeDocs, ['tenthMarksheetUrl', 'tenthMarksheet', 'sslcMarksheet', 'sslcMarksheetUrl', 'tenth']) },
           { id: 'twelfth', field: 'twelfthMarksheet', name: 'PUC / 12th Marks Card', url: extractDocUrl(safeDocs, ['twelfthMarksheetUrl', 'twelfthMarksheet', 'pucMarksheet', 'pucMarksheetUrl', 'twelfth']) },
