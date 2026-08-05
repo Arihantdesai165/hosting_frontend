@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, CheckCircle2, XCircle, AlertCircle, Maximize2, ExternalLink } from 'lucide-react';
+import { buildFileUrl } from '../../../utils/file.utils';
 
 interface DocumentInfo {
   id: string;
@@ -75,16 +76,16 @@ export const DocumentVerificationPanel: React.FC<DocumentVerificationPanelProps>
             <div className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 p-3 flex items-center justify-between z-10">
               <h4 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">{selectedDoc.name}</h4>
               <div className="flex gap-2">
-                <a href={selectedDoc.url || '#'} target="_blank" rel="noopener noreferrer" className="p-1.5 bg-neutral-100 hover:bg-neutral-200 rounded-md text-neutral-600">
+                <a href={buildFileUrl(selectedDoc.url) || '#'} target="_blank" rel="noopener noreferrer" className="p-1.5 bg-neutral-100 hover:bg-neutral-200 rounded-md text-neutral-600">
                   <ExternalLink size={16} />
                 </a>
               </div>
             </div>
             <div className="flex-1 overflow-auto relative flex items-center justify-center p-4">
                {selectedDoc.url?.toLowerCase().endsWith('.pdf') ? (
-                 <iframe src={selectedDoc.url} className="w-full h-full rounded-lg border border-neutral-200" title={selectedDoc.name} />
+                 <iframe src={buildFileUrl(selectedDoc.url)} className="w-full h-full rounded-lg border border-neutral-200" title={selectedDoc.name} />
                ) : (
-                 <img src={selectedDoc.url!} alt={selectedDoc.name} className="max-w-full max-h-full object-contain rounded-lg shadow-sm" />
+                 <img src={buildFileUrl(selectedDoc.url)} alt={selectedDoc.name} className="max-w-full max-h-full object-contain rounded-lg shadow-sm" />
                )}
             </div>
             <div className="bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 p-4 flex items-center justify-between gap-4">

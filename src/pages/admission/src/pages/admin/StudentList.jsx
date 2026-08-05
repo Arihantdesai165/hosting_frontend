@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../../../services/api';
+import { buildFileUrl } from '../../../../../utils/file.utils';
 import { Search, Eye, Filter, ChevronLeft, ChevronRight, Loader2, Users } from 'lucide-react';
 
 const STATUSES = ['All', 'DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'ENROLLED'];
@@ -120,7 +121,7 @@ const StudentList = () => {
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
                                             <img
-                                                src={app.user?.profileImage || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+                                                src={buildFileUrl(app.user?.profileImage) || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
                                                 alt="avatar"
                                                 className="w-8 h-8 rounded-full object-cover border border-slate-200"
                                             />

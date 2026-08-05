@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit, X, Lock, Download, Save, Loader2 } from 'lucide-react';
+import { buildFileUrl } from '../../../utils/file.utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import userManagementService, { StudentProfile } from '../../../services/userManagement.service';
@@ -246,7 +247,7 @@ export const StudentManagementPage: React.FC = () => {
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                            <img 
-                            src={student.user.profileImage || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} 
+                            src={buildFileUrl(student.user.profileImage) || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} 
                             alt={student.user.firstName}
                             className="w-10 h-10 rounded-xl object-cover border border-neutral-200 dark:border-neutral-700 bg-neutral-100" 
                           />

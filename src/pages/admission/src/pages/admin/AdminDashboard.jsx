@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../../../services/api';
+import { buildFileUrl } from '../../../../../utils/file.utils';
 import { 
     Users, Clock, CheckCircle2, XCircle, Eye, 
     GraduationCap, TrendingUp, BarChart3, Loader2, RefreshCw
@@ -110,7 +111,7 @@ const AdminDashboard = () => {
                             <div key={app.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition">
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={app.user?.profileImage || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+                                        src={buildFileUrl(app.user?.profileImage) || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
                                         alt="avatar"
                                         className="w-10 h-10 rounded-full object-cover border border-slate-200"
                                     />

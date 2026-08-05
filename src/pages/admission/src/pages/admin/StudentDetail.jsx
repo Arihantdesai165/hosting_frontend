@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../../../../services/api';
+import { buildFileUrl } from '../../../../../utils/file.utils';
 import {
     ChevronLeft, Loader2, CheckCircle2, XCircle, Clock, User,
     Users, MapPin, GraduationCap, FileText, Phone, Mail,
@@ -112,7 +113,7 @@ const StudentDetail = () => {
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <img
-                            src={application.user?.profileImage || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+                            src={buildFileUrl(application.user?.profileImage) || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
                             alt="avatar"
                             className="w-14 h-14 rounded-full object-cover border-2 border-slate-200"
                         />
@@ -307,7 +308,7 @@ const StudentDetail = () => {
                             docs[key] ? (
                                 <a
                                     key={key}
-                                    href={`${(import.meta.env.VITE_API_URL || '/api').replace('/api', '')}${docs[key]}`}
+                                    href={buildFileUrl(docs[key])}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition"

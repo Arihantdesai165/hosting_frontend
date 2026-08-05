@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Plus, Edit, Trash2, Mail, Phone, X, Award, MapPin } from 'lucide-react';
+import { buildFileUrl } from '../../../utils/file.utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import userManagementService from '../../../services/userManagement.service';
@@ -95,7 +96,7 @@ export const PrincipalManagementPage: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <img 
-                    src={principal.user.profileImage || `https://ui-avatars.com/api/?name=${principal.user.firstName}+${principal.user.lastName}&background=random`} 
+                    src={buildFileUrl(principal.user.profileImage) || `https://ui-avatars.com/api/?name=${principal.user.firstName}+${principal.user.lastName}&background=random`} 
                     alt={principal.user.firstName}
                     className="w-16 h-16 rounded-2xl object-cover border-2 border-white dark:border-neutral-800 shadow-md" 
                   />

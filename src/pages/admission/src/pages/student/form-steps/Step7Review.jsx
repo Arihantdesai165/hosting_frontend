@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../../../../../services/api';
+import { buildFileUrl } from '../../../../../../utils/file.utils';
 import {
     Loader2,
     CheckCircle,
@@ -91,10 +92,10 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
     };
 
     const getPhotoUrl = (path) => {
-        if (!path) return '';
-        if (path.startsWith('http')) return path;
-        const base = api.defaults.baseURL || '/api';
-        return `${base.replace('/api', '')}${path}`;
+        const resolved = buildFileUrl(path);
+        console.log("Original:", path);
+        console.log("Resolved:", resolved);
+        return resolved;
     };
 
     if (loading) {

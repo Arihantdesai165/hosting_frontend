@@ -6,6 +6,7 @@ import {
 import { toast } from 'react-toastify';
 import { getAcademicYear } from '../../../utils/date.util';
 import API from '../../../services/api';
+import { buildFileUrl } from '../../../utils/file.utils';
 import admissionService, { AdmissionApplication } from '../../../services/admission.service';
 import { downloadAdmissionPDF } from '../../admission/src/utils/pdfGenerator';
 import { generateStudentReport, ExportFilterMetadata } from '../../../utils/studentExportGenerator';
@@ -33,10 +34,7 @@ const STATUS_LABEL_MAP: Record<string, string> = {
 };
 
 const getPhotoUrl = (path: string | null) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  const base = API.defaults.baseURL || '/api';
-  return `${base.replace('/api', '')}${path}`;
+  return buildFileUrl(path);
 };
 
 interface StudentsDashboardPageProps {

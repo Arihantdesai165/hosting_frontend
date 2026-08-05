@@ -5,14 +5,16 @@ import API from '../../../services/api';
 import { ArrowLeft, User, Users, GraduationCap, CheckCircle2, XCircle, FileText, MapPin, ExternalLink, ShieldCheck, Maximize2, Image, Layers, Clock, Send, X, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getAcademicYear } from '../../../utils/date.util';
+import { buildFileUrl } from '../../../utils/file.utils';
 import { DocumentVerificationWorkspace } from './DocumentVerificationWorkspace';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const getDocUrl = (url?: string | null) => {
-  if (!url) return null;
-  if (url.startsWith('http')) return url;
-  return url;
+  const resolved = buildFileUrl(url);
+  console.log("Original:", url);
+  console.log("Resolved:", resolved);
+  return resolved;
 };
 
 const getMissingFields = (app: AdmissionApplication | null) => {

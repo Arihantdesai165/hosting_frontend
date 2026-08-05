@@ -14,6 +14,7 @@ import {
   Building
 } from 'lucide-react';
 import API from '../../services/api';
+import { buildFileUrl } from '../../utils/file.utils';
 
 export const PrincipalProfilePage: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -59,7 +60,7 @@ export const PrincipalProfilePage: React.FC = () => {
           <div className="space-y-4 w-full flex flex-col items-center">
             <div className="relative">
               <img
-                src={user?.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&fit=crop'}
+                src={buildFileUrl(user?.profileImage) || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&fit=crop'}
                 alt="Principal"
                 className="w-28 h-28 rounded-[28px] object-cover border-4 border-white dark:border-neutral-800 shadow-md"
               />

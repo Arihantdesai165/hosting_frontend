@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../../services/api';
+import { buildFileUrl } from '../../../utils/file.utils';
 import {
   X,
   CheckCircle2,
@@ -111,13 +112,19 @@ const extractDocUrl = (docSource: any, keys: string[]): string | null => {
         const itemField = (item.field || item.id || item.name || '').toLowerCase();
         for (const k of keys) {
           if (itemField.includes(k.toLowerCase()) && item.url) {
-            return item.url;
+            const resolved = buildFileUrl(item.url);
+            console.log("Original:", item.url);
+            console.log("Resolved:", resolved);
+            return resolved;
           }
         }
       } else if (typeof item === 'string') {
         for (const k of keys) {
           if (item.toLowerCase().includes(k.toLowerCase())) {
-            return item;
+            const resolved = buildFileUrl(item);
+            console.log("Original:", item);
+            console.log("Resolved:", resolved);
+            return resolved;
           }
         }
       }
@@ -127,7 +134,10 @@ const extractDocUrl = (docSource: any, keys: string[]): string | null => {
   if (typeof docSource === 'object') {
     for (const k of keys) {
       if (docSource[k] !== undefined && docSource[k] !== null && docSource[k] !== '') {
-        return docSource[k];
+        const resolved = buildFileUrl(docSource[k]);
+        console.log("Original:", docSource[k]);
+        console.log("Resolved:", resolved);
+        return resolved;
       }
     }
   }

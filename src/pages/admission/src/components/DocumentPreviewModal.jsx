@@ -1,14 +1,15 @@
 import React from 'react';
 import { X, ZoomIn, ZoomOut, Download } from 'lucide-react';
+import { buildFileUrl } from '../../../../utils/file.utils';
 
 const DocumentPreviewModal = ({ isOpen, onClose, documentUrl, documentLabel }) => {
     const [zoom, setZoom] = React.useState(1);
 
     if (!isOpen || !documentUrl) return null;
 
-    const fullUrl = documentUrl.startsWith('http')
-        ? documentUrl
-        : `${window.location.protocol}//${window.location.hostname}:5000/${documentUrl.replace(/\\/g, '/')}`;
+    const fullUrl = buildFileUrl(documentUrl);
+    console.log("Original:", documentUrl);
+    console.log("Resolved:", fullUrl);
 
     const isImage = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(documentUrl);
 

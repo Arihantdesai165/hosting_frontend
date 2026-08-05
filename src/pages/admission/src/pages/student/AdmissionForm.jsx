@@ -12,6 +12,7 @@ import {
     CheckCircle2
 } from 'lucide-react';
 import api from '../../../../../services/api';
+import { buildFileUrl } from '../../../../../utils/file.utils';
 import toast from 'react-hot-toast';
 import StepIndicator from '../../components/StepIndicator';
 import useApplicationStatus from '../../hooks/useApplicationStatus';
@@ -436,16 +437,10 @@ const AdmissionForm = () => {
             const par = details?.studentparentdetails || {};
             const addr = details?.studentaddress || {};
             const acad = details?.studentacademicdetails || {};
-            const apiBaseUrl = import.meta.env.VITE_API_URL || '';
-            const backendBase = apiBaseUrl.replace('/api', '');
-
             const absoluteLogoUrl = new URL('/logo.png', window.location.origin).href;
 
             const getDocUrl = (path) => {
-                if (!path) return '';
-                if (path.startsWith('http')) return path;
-                const normalizedPath = path.startsWith('/') ? path : '/' + path;
-                return `${backendBase}${normalizedPath}`;
+                return buildFileUrl(path);
             };
 
             const photoUrl = docs.photoUrl ? getDocUrl(docs.photoUrl) : '';
@@ -461,6 +456,9 @@ const AdmissionForm = () => {
             console.log("photoUrl", photoUrl);
             console.log("signatureUrl", signatureUrl);
             console.log("logoUrl", logoUrl);
+
+            console.log("Original:", docs.photoUrl);
+            console.log("Resolved:", buildFileUrl(docs.photoUrl));
 
             const isImageUrl = (url) => {
                 if (!url) return false;
@@ -747,22 +745,18 @@ const AdmissionForm = () => {
                 printWindow.document.title = "";
                 printWindow.document.close();
 
-                const printImages = Array.from(printWindow.document.images);
-                const imagePromises = printImages.map((img) => {
-                    return new Promise((resolve) => {
-                        if (img.complete) {
-                            resolve();
-                            return;
-                        }
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve();
-                    });
-                });
-
-                Promise.all(imagePromises).then(() => {
-                    printWindow.focus();
-                    printWindow.print();
-                });
+                await Promise.all(
+                    Array.from(printWindow.document.images)
+                        .filter(img => !img.complete)
+                        .map(img =>
+                            new Promise(resolve => {
+                                img.onload = resolve;
+                                img.onerror = resolve;
+                            })
+                        )
+                );
+                printWindow.focus();
+                printWindow.print();
             } else {
                 toast.error('Please allow popups from this site to download the PDF.');
             }

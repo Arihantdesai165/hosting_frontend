@@ -1,4 +1,5 @@
 import { getAcademicYear } from '../../../../utils/date.util';
+import { buildFileUrl } from '../../../../utils/file.utils';
 
 /**
  * Shared PDF/Print generator for student admission application acknowledgment forms.
@@ -27,15 +28,9 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             ? `${pd.firstName} ${pd.lastName || ''}`.trim()
             : `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
-        const apiBaseUrl = import.meta.env.VITE_API_URL || '';
-        const backendBase = apiBaseUrl.replace('/api', '');
-
         const absoluteLogoUrl = new URL('/logo.png', window.location.origin).href;
         const getDocUrl = (path) => {
-            if (!path) return '';
-            if (path.startsWith('http')) return path;
-            const normalizedPath = path.startsWith('/') ? path : '/' + path;
-            return `${backendBase}${normalizedPath}`;
+            return buildFileUrl(path);
         };
         const photoUrl = docs.photoUrl ? getDocUrl(docs.photoUrl) : '';
         const signatureUrl = docs.signatureUrl ? getDocUrl(docs.signatureUrl) : '';
@@ -50,6 +45,9 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         console.log("photoUrl", photoUrl);
         console.log("signatureUrl", signatureUrl);
         console.log("logoUrl", logoUrl);
+
+        console.log("Original:", docs.photoUrl);
+        console.log("Resolved:", buildFileUrl(docs.photoUrl));
 
         const isImageUrl = (url) => {
             if (!url) return false;
@@ -369,22 +367,18 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             printWindow.document.write(printHTML);
             printWindow.document.close();
 
-            const printImages = Array.from(printWindow.document.images);
-            const imagePromises = printImages.map((img) => {
-                return new Promise((resolve) => {
-                    if (img.complete) {
-                        resolve();
-                        return;
-                    }
-                    img.onload = () => resolve();
-                    img.onerror = () => resolve();
-                });
-            });
-
-            Promise.all(imagePromises).then(() => {
-                printWindow.focus();
-                printWindow.print();
-            });
+            await Promise.all(
+                Array.from(printWindow.document.images)
+                    .filter(img => !img.complete)
+                    .map(img =>
+                        new Promise(resolve => {
+                            img.onload = resolve;
+                            img.onerror = resolve;
+                        })
+                    )
+            );
+            printWindow.focus();
+            printWindow.print();
         } else {
             toast.error('Please allow popups to download the admission PDF.');
         }

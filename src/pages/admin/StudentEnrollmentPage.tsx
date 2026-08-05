@@ -6,6 +6,7 @@ import {
   ChevronLeft, ChevronRight, GraduationCap
 } from 'lucide-react';
 import Toast from '../../components/common/Toast';
+import { buildFileUrl } from '../../utils/file.utils';
 import { CardSkeleton } from '../../components/common/Skeleton';
 import admissionService, {
   AdmissionApplication,
@@ -527,7 +528,7 @@ export const StudentEnrollmentPage: React.FC<StudentEnrollmentPageProps> = ({ de
                       getDocumentList(selected).map((doc) => (
                         <a
                           key={doc.label}
-                          href={`${(import.meta.env.VITE_API_URL || '/api').replace('/api', '')}${doc.url}`}
+                          href={buildFileUrl(doc.url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-between p-3 rounded-xl border bg-emerald-50 border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-all"
