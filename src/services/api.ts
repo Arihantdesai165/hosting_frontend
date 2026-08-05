@@ -3,7 +3,18 @@ import { store } from '../store/store';
 import { startLoading, stopLoading } from '../store/uiSlice';
 import { forceLogout } from '../utils/auth.utils';
 
-console.log("API URL =", import.meta.env.VITE_API_URL);
+const DEFAULT_CLOUDFLARE_API_URL = 'https://resulting-pensions-migration-regularly.trycloudflare.com/api';
+
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && !envUrl.includes('racks-frames-context-concerts') && envUrl !== '/api') {
+    return envUrl;
+  }
+  return DEFAULT_CLOUDFLARE_API_URL;
+};
+
+const targetBaseURL = getApiBaseUrl();
+console.log("API URL Target =", targetBaseURL);
 
 let startLoadingCallback: () => void = () => {};
 let stopLoadingCallback: () => void = () => {};
@@ -14,7 +25,7 @@ export const registerLoadingCallbacks = (start: () => void, stop: () => void) =>
 };
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: targetBaseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
