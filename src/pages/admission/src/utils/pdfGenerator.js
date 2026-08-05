@@ -148,6 +148,47 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             }
         }
 
+        // Programmatically load and decode images before appending to DOM
+        const createImageElement = async (base64, alt, className = '', style = {}) => {
+            if (!base64) {
+                console.log(`[Image Element Debug] ${alt} base64 is empty`);
+                return null;
+            }
+            const img = new Image();
+            img.alt = alt || '';
+            img.className = className;
+            Object.assign(img.style, style);
+            img.src = base64;
+            
+            console.log(`[Image Element Debug] Created image element for ${alt}:`);
+            console.log(`- Src length: ${img.src.length}`);
+            console.log(`- Initial Complete: ${img.complete}`);
+            
+            try {
+                await img.decode();
+                console.log(`- Decoded: True`);
+                console.log(`- Complete after decode: ${img.complete}`);
+                console.log(`- NaturalWidth: ${img.naturalWidth}`);
+                console.log(`- NaturalHeight: ${img.naturalHeight}`);
+                
+                if (img.naturalWidth === 0) {
+                    console.error(`[Image Element Debug] WARNING: ${alt} naturalWidth is 0 after decode!`);
+                }
+                return img;
+            } catch (err) {
+                console.error(`- Decoded: False (Exception: ${err.message})`);
+                console.error(`- Complete after decode: ${img.complete}`);
+                console.error(`- NaturalWidth: ${img.naturalWidth}`);
+                console.error(`- NaturalHeight: ${img.naturalHeight}`);
+                return null;
+            }
+        };
+
+        const watermarkImg = logoBase64 ? await createImageElement(logoBase64, "Watermark") : null;
+        const logoImg = logoBase64 ? await createImageElement(logoBase64, "Logo") : null;
+        const photoImg = photoBase64 ? await createImageElement(photoBase64, "Photo") : null;
+        const signatureImg = signatureBase64 ? await createImageElement(signatureBase64, "Signature") : null;
+
         const getPdfStatusText = (det) => {
             const status = det?.applicationStatus;
             if (status === 'ENROLLED') return 'ADMISSION CONFIRMED';
@@ -163,13 +204,15 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         };
         const pdfStatus = getPdfStatusText(details);
 
-        // Offscreen Container setup
+        // Offscreen Container setup (Fixed coordinates so html2canvas doesn't clip)
         const wrapper = document.createElement('div');
         wrapper.id = 'pdf-rendering-wrapper';
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
+        wrapper.style.position = 'fixed';
+        wrapper.style.left = '0';
         wrapper.style.top = '0';
+        wrapper.style.width = '190mm';
         wrapper.style.zIndex = '-9999';
+        wrapper.style.pointerEvents = 'none';
         wrapper.style.background = '#ffffff';
 
         const commonStyle = `
@@ -187,7 +230,7 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                 }
                 .header { border-bottom: 3px solid #1a3c6e; padding-bottom: 12px; margin-bottom: 15px; }
                 .header-top { display: grid; grid-template-columns: 80px 1fr 80px; align-items: center; }
-                .logo-box { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+                .logo-box { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
                 .logo-box img { width: 100%; height: 100%; object-fit: contain; }
                 .header-text { flex: 1; text-align: center; padding: 0 10px; }
                 .header-text h1 { font-size: 14pt; font-weight: bold; color: #1a3c6e; }
@@ -227,20 +270,18 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         page1.className = 'application-form';
         page1.innerHTML = `
             ${commonStyle}
-            <div class="watermark">${logoBase64 ? `<img src="${logoBase64}" alt="" />` : ''}</div>
+            <div id="watermark-placeholder" class="watermark"></div>
             ${details?.applicationStatus !== 'REJECTED' ? `<div class="confirmed-stamp">${pdfStatus}</div>` : ''}
             <div class="header">
                 <div class="header-top">
-                    <div class="logo-box">${logoBase64 ? `<img src="${logoBase64}" alt="JCER Logo" />` : `<span>Logo</span>`}</div>
+                    <div class="logo-box" id="logo-placeholder"></div>
                     <div class="header-text">
                         <h1>JAIN COLLEGE OF ENGINEERING AND RESEARCH</h1>
                         <p style="font-size:8px;color:#475569;">(Approved by AICTE, New Delhi, Affiliated to VTU Belagavi &amp; Recognized by Govt. of Karnataka)</p>
                         <h2>ADMISSION APPLICATION FORM</h2>
                         <p>Academic Session ${details?.academicYear || getAcademicYear()}</p>
                     </div>
-                    <div class="photo-box">
-                        ${photoBase64 ? `<img src="${photoBase64}" alt="Passport Photo" />` : `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`}
-                    </div>
+                    <div class="photo-box" id="photo-placeholder"></div>
                 </div>
                 <div class="header-bottom">
                     <span><strong>Admission No:</strong> ${details?.applicationNumber || 'N/A'}</span>
@@ -354,7 +395,7 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                     <div class="signature-label">Date &amp; Place</div>
                 </div>
                 <div class="signature-item">
-                    ${signatureBase64 ? `<img class="signature-img" src="${signatureBase64}" alt="Signature" />` : `<span style="font-size: 8px; color: #999; display: block; margin-bottom: 5px;">Signature Not Uploaded</span>`}
+                    <div id="signature-placeholder"></div>
                     <div class="signature-line"></div>
                     <div class="signature-label">Applicant Signature</div>
                 </div>
@@ -366,6 +407,44 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                 <p>Contact: 099448693987 | principal@jcer.in</p>
             </div>
         `;
+
+        // Inject page 1 programmatically loaded images
+        const watermarkContainer = page1.querySelector('#watermark-placeholder');
+        if (watermarkImg && watermarkContainer) {
+            watermarkImg.style.width = '100%';
+            watermarkImg.style.height = '100%';
+            watermarkImg.style.objectFit = 'contain';
+            watermarkContainer.appendChild(watermarkImg);
+        }
+
+        const logoContainer = page1.querySelector('#logo-placeholder');
+        if (logoImg && logoContainer) {
+            logoImg.style.width = '100%';
+            logoImg.style.height = '100%';
+            logoImg.style.objectFit = 'contain';
+            logoContainer.appendChild(logoImg);
+        } else if (logoContainer) {
+            logoContainer.innerHTML = `<span>Logo</span>`;
+        }
+
+        const photoContainer = page1.querySelector('#photo-placeholder');
+        if (photoImg && photoContainer) {
+            photoImg.style.width = '100%';
+            photoImg.style.height = '100%';
+            photoImg.style.objectFit = 'cover';
+            photoContainer.appendChild(photoImg);
+        } else if (photoContainer) {
+            photoContainer.innerHTML = `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`;
+        }
+
+        const signatureContainer = page1.querySelector('#signature-placeholder');
+        if (signatureImg && signatureContainer) {
+            signatureImg.className = 'signature-img';
+            signatureContainer.appendChild(signatureImg);
+        } else if (signatureContainer) {
+            signatureContainer.innerHTML = `<span style="font-size: 8px; color: #999; display: block; margin-bottom: 5px;">Signature Not Uploaded</span>`;
+        }
+
         wrapper.appendChild(page1);
 
         // Render Page 2 (Supporting Documents)
@@ -375,64 +454,91 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             page2.className = 'application-form';
             page2.innerHTML = `
                 ${commonStyle}
-                <div class="watermark">${logoBase64 ? `<img src="${logoBase64}" alt="" />` : ''}</div>
+                <div id="watermark-placeholder-p2" class="watermark"></div>
                 <div class="section" style="margin-top: 10px;">
                     <div class="section-title">SUPPORTING DOCUMENTS</div>
                     <div class="section-content" style="border: none;">
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 15px;">
-                            ${resolvedImageDocs.map(d => `
-                                <div style="page-break-inside: avoid; border: 1px solid #dde1e8; padding: 15px; background: white; text-align: center;">
-                                    <h3 style="font-size: 11pt; color: #1a3c6e; margin-bottom: 10px; border-bottom: 2px solid #1a3c6e; display: inline-block; padding-bottom: 3px;">${d.label}</h3>
-                                    <div style="max-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 5px;">
-                                        <img src="${d.base64}" alt="${d.label}" style="max-width: 100%; max-height: 380px; object-fit: contain;" />
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
+                        <div id="docs-placeholder" style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 15px;"></div>
                     </div>
                 </div>
             `;
+
+            const watermarkImgP2 = logoBase64 ? await createImageElement(logoBase64, "Watermark P2") : null;
+            const watermarkContainerP2 = page2.querySelector('#watermark-placeholder-p2');
+            if (watermarkImgP2 && watermarkContainerP2) {
+                watermarkImgP2.style.width = '100%';
+                watermarkImgP2.style.height = '100%';
+                watermarkImgP2.style.objectFit = 'contain';
+                watermarkContainerP2.appendChild(watermarkImgP2);
+            }
+
+            const docsContainer = page2.querySelector('#docs-placeholder');
+            for (const d of resolvedImageDocs) {
+                const docImg = await createImageElement(d.base64, d.label, '', {
+                    maxWidth: '100%',
+                    maxHeight: '380px',
+                    objectFit: 'contain'
+                });
+                if (docImg && docsContainer) {
+                    const card = document.createElement('div');
+                    card.style.pageBreakInside = 'avoid';
+                    card.style.border = '1px solid #dde1e8';
+                    card.style.padding = '15px';
+                    card.style.background = 'white';
+                    card.style.textAlign = 'center';
+                    
+                    const title = document.createElement('h3');
+                    title.style.fontSize = '11pt';
+                    title.style.color = '#1a3c6e';
+                    title.style.marginBottom = '10px';
+                    title.style.borderBottom = '2px solid #1a3c6e';
+                    title.style.display = 'inline-block';
+                    title.style.paddingBottom = '3px';
+                    title.innerText = d.label;
+                    
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.style.maxHeight = '400px';
+                    imgWrapper.style.display = 'flex';
+                    imgWrapper.style.alignItems = 'center';
+                    imgWrapper.style.justifyContent = 'center';
+                    imgWrapper.style.overflow = 'hidden';
+                    imgWrapper.style.marginTop = '5px';
+                    
+                    imgWrapper.appendChild(docImg);
+                    card.appendChild(title);
+                    card.appendChild(imgWrapper);
+                    docsContainer.appendChild(card);
+                }
+            }
+
             wrapper.appendChild(page2);
         }
 
-        // Add to body offscreen
+        // Add to body offscreen but in DOM flow
         document.body.appendChild(wrapper);
 
-        // Verify all images loaded and naturalWidth > 0
+        // Verify all images loaded and naturalWidth > 0 (Task 4 verification)
         const wrapperImages = Array.from(wrapper.getElementsByTagName('img'));
-        await Promise.all(
-            wrapperImages.map(img => {
-                return new Promise((resolve) => {
-                    if (img.complete && img.naturalWidth > 0) {
-                        resolve();
-                    } else {
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve();
-                    }
-                });
-            })
-        );
-
-        // Log details of each image before running html2canvas (Step 4)
         console.log(`[Image Verification] Checking ${wrapperImages.length} images before html2canvas:`);
         let hasFailedImage = false;
         
         wrapperImages.forEach((img, idx) => {
             console.log(`Image #${idx + 1}:`);
-            console.log(`- Src: ${img.src.substring(0, 150)}...`);
+            console.log(`- Src length: ${img.src.length}`);
+            console.log(`- Src prefix: ${img.src.substring(0, 100)}...`);
             console.log(`- Complete: ${img.complete}`);
             console.log(`- NaturalWidth: ${img.naturalWidth}`);
             console.log(`- NaturalHeight: ${img.naturalHeight}`);
             
             if (img.naturalWidth === 0) {
                 hasFailedImage = true;
-                console.error(`[Image Verification] Image #${idx + 1} (${img.alt || 'No alt'}) has naturalWidth === 0! It failed to load/render.`);
+                console.error(`[Image Verification] Image #${idx + 1} (${img.alt || 'No alt'}) has naturalWidth === 0! It failed to render.`);
             }
         });
 
         if (hasFailedImage) {
             toast.dismiss(toastId);
-            toast.error("One or more images failed to render correctly. Please inspect the browser DevTools Console for details.");
+            toast.error("One or more images failed to render correctly. PDF generation aborted.");
             document.body.removeChild(wrapper);
             throw new Error("PDF generation stopped: one or more images had naturalWidth === 0");
         }
@@ -450,9 +556,21 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             imageTimeout: 30000
         });
 
+        // Debug download canvas as PNG (Task 2 & 5 verification)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            try {
+                const link = document.createElement('a');
+                link.download = `debug_canvas_page1.png`;
+                link.href = canvas1.toDataURL('image/png');
+                link.click();
+                console.log(`[Canvas Debug] Triggered download of debug_canvas_page1.png`);
+            } catch (canvasErr) {
+                console.error("[Canvas Debug] Failed to export debug canvas:", canvasErr);
+            }
+        }
+
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgWidth = 210;
-        const pageHeight = 297;
 
         // Render Page 1 image onto A4 page
         const imgHeight1 = (canvas1.height * imgWidth) / canvas1.width;
@@ -469,6 +587,20 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                 logging: true,
                 imageTimeout: 30000
             });
+            
+            // Debug download canvas 2 as PNG
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                try {
+                    const link2 = document.createElement('a');
+                    link2.download = `debug_canvas_page2.png`;
+                    link2.href = canvas2.toDataURL('image/png');
+                    link2.click();
+                    console.log(`[Canvas Debug] Triggered download of debug_canvas_page2.png`);
+                } catch (canvasErr) {
+                    console.error("[Canvas Debug] Failed to export debug canvas 2:", canvasErr);
+                }
+            }
+
             const imgHeight2 = (canvas2.height * imgWidth) / canvas2.width;
             const imgData2 = canvas2.toDataURL('image/jpeg', 1.0);
             pdf.addPage();
