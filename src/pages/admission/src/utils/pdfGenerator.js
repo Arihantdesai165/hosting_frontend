@@ -19,6 +19,7 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         const pd = details?.studentpersonaldetails || {};
         const par = details?.studentparentdetails || {};
         const addr = details?.studentaddress || {};
+        const acad = details?.studentacademicdetails || details?.academicDetails || details?.academic || {};
         const docs = details?.studentdocuments || details?.documents || {};
         const branch = details?.branch || {};
         const user = details?.user || {};
@@ -35,13 +36,13 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         const signatureUrl = docs.signatureUrl ? buildFileUrl(docs.signatureUrl) : '';
         const logoUrl = absoluteLogoUrl;
 
-        // Trace data flow logs (Step 3 & 5)
-        console.log("application", details);
-        console.log("application.documents", details?.studentdocuments || details?.documents);
-        console.log("signature", signatureUrl);
-        console.log("logo", logoUrl);
-        console.log("signatureUrl", signatureUrl);
-        console.log("logoUrl", logoUrl);
+        // Trace data flow logs
+        console.log("Application:", details);
+        console.log("Personal:", pd);
+        console.log("Parent:", par);
+        console.log("Address:", addr);
+        console.log("Academic:", acad);
+        console.log("Documents:", docs);
 
         const isImageUrl = (url) => {
             if (!url) return false;
@@ -350,21 +351,33 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                     <div class="section-title">5. ACADEMIC RECORD</div>
                     <div class="section-content">
                         <table><tbody>
-                            <tr><td colspan="2" class="subheader">SSLC / 10th</td></tr>
-                            <tr><td class="label">Board</td><td class="value">${acad.tenthBoard || '—'}</td></tr>
-                            <tr><td class="label">Year</td><td class="value">${acad.tenthPassingYear || '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad.tenthPercentage ? `${acad.tenthPercentage}%` : '—'}</td></tr>
+                            <tr><td colspan="2" class="subheader">SSLC / 10th Standard</td></tr>
+                            <tr><td class="label">School / Institution</td><td class="value">${acad?.tenthSchool || acad?.sslcSchool || '—'}</td></tr>
+                            <tr><td class="label">Board</td><td class="value">${acad?.tenthBoard || acad?.sslcBoard || '—'}</td></tr>
+                            <tr><td class="label">Register Number</td><td class="value">${acad?.tenthRegisterNumber || acad?.sslcRegisterNumber || '—'}</td></tr>
+                            <tr><td class="label">Year of Passing</td><td class="value">${acad?.tenthPassingYear || acad?.sslcYear || '—'}</td></tr>
+                            <tr><td class="label">Obtained / Max Marks</td><td class="value">${(acad?.tenthMarksObtained || acad?.tenthObtainedMarks) ? `${acad?.tenthMarksObtained || acad?.tenthObtainedMarks} / ${acad?.tenthMaxMarks || '—'}` : '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.tenthPercentage ? `${acad.tenthPercentage}%` : '—'}</td></tr>
                             ${showPUC ? `
-                            <tr><td colspan="2" class="subheader">PUC / 12th</td></tr>
-                            <tr><td class="label">Board</td><td class="value">${acad.twelfthBoard || '—'}</td></tr>
-                            <tr><td class="label">Year</td><td class="value">${acad.twelfthPassingYear || '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad.twelfthPercentage ? `${acad.twelfthPercentage}%` : '—'}</td></tr>
+                            <tr><td colspan="2" class="subheader">PUC / 12th Standard</td></tr>
+                            <tr><td class="label">College / Institution</td><td class="value">${acad?.twelfthCollege || acad?.twelfthSchool || '—'}</td></tr>
+                            <tr><td class="label">Board</td><td class="value">${acad?.twelfthBoard || '—'}</td></tr>
+                            <tr><td class="label">Stream</td><td class="value">${acad?.twelfthStream || '—'}</td></tr>
+                            <tr><td class="label">Register Number</td><td class="value">${acad?.twelfthRegisterNumber || '—'}</td></tr>
+                            <tr><td class="label">Year of Passing</td><td class="value">${acad?.twelfthPassingYear || '—'}</td></tr>
+                            <tr><td class="label">Obtained / Max Marks</td><td class="value">${acad?.twelfthObtainedMarks ? `${acad.twelfthObtainedMarks} / ${acad?.twelfthMaxMarks || '—'}` : '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.twelfthPercentage ? `${acad.twelfthPercentage}%` : '—'}</td></tr>
                             ` : ''}
                             ${showDiploma ? `
-                            <tr><td colspan="2" class="subheader">Diploma details (Lateral Entry)</td></tr>
-                            <tr><td class="label">University</td><td class="value">${acad.diplomaUniversity || '—'}</td></tr>
-                            <tr><td class="label">Year</td><td class="value">${acad.diplomaYear || '—'}</td></tr>
-                            <tr><td class="label">Percentage</td><td class="value">${acad.diplomaPercentage ? `${acad.diplomaPercentage}%` : '—'}</td></tr>
+                            <tr><td colspan="2" class="subheader">Diploma Details (Lateral Entry)</td></tr>
+                            <tr><td class="label">University / Board</td><td class="value">${acad?.diplomaUniversity || '—'}</td></tr>
+                            <tr><td class="label">Branch / Stream</td><td class="value">${acad?.diplomaBranch || '—'}</td></tr>
+                            <tr><td class="label">Year of Passing</td><td class="value">${acad?.diplomaYear || acad?.diplomaPassingYear || '—'}</td></tr>
+                            <tr><td class="label">Percentage</td><td class="value">${acad?.diplomaPercentage ? `${acad.diplomaPercentage}%` : '—'}</td></tr>
+                            ` : ''}
+                            ${(acad?.cetRank || acad?.entranceRank) ? `
+                            <tr><td colspan="2" class="subheader">Entrance Examination</td></tr>
+                            <tr><td class="label">Entrance Rank</td><td class="value">${acad?.cetRank || acad?.entranceRank}</td></tr>
                             ` : ''}
                         </tbody></table>
                     </div>
