@@ -500,6 +500,7 @@ export const PrincipalAdmissionReviewPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <DocumentItem field="photo" appId={app.id} label="Applicant Photo" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
               <DocumentItem field="signature" appId={app.id} label="Signature" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
               <DocumentItem field="tenthMarksheet" appId={app.id} label="10th Marksheet" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
               {app?.qualification === 'DIPLOMA' || app?.admissionType === 'DCET' ? (

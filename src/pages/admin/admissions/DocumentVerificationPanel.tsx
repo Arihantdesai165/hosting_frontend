@@ -31,6 +31,7 @@ export const DocumentVerificationPanel: React.FC<DocumentVerificationPanelProps>
   const [selectedDoc, setSelectedDoc] = useState<DocumentInfo | null>(null);
 
   const docList: DocumentInfo[] = [
+    { id: 'photo', name: 'Passport Photo', url: documents.photoUrl, status: 'PENDING' },
     { id: 'signature', name: 'Signature', url: documents.signatureUrl, status: 'PENDING' },
     { id: 'tenth', name: '10th Marksheet', url: documents.tenthMarksheetUrl, status: 'PENDING' },
     { id: 'twelfth', name: '12th Marksheet', url: documents.twelfthMarksheetUrl, status: 'PENDING' },

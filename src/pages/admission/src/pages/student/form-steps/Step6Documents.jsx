@@ -15,6 +15,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
     const isDiplomaApplicant = data?.qualification === 'DIPLOMA';
 
     const DOCS = [
+        { name: 'photo',           label: 'Recent Passport Photo',            icon: User,          note: 'Accepted: JPG / PNG' },
         { name: 'signature',       label: 'E-Signature / Scanned Sign',        icon: ClipboardIcon, note: 'Accepted: JPG / PNG' },
         { name: 'sslcMarkscard',   label: 'SSLC / 10th Marks Card',            icon: FileText,      note: 'Accepted: JPG / PNG' },
         ...(isDiplomaApplicant ? [
@@ -36,6 +37,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
     ];
 
     const API_FIELDS = {
+        photo:                     'photo',
         signature:                 'signature',
         sslcMarkscard:             'tenthMarksheet',
         pucMarkscard:              'twelfthMarksheet',
@@ -48,7 +50,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
         studyCertificate:          'domicileCertificate',
     };
 
-    const COLOR_REQUIRED_DOCS = ['sslcMarkscard', 'aadhaar'];
+    const COLOR_REQUIRED_DOCS = ['photo', 'sslcMarkscard', 'aadhaar'];
 
     const handleFileChange = async (e, docName) => {
         const file = e.target.files[0];
@@ -111,13 +113,14 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
             return;
         }
 
+        const isPhotoPresent     = files.photo        || data?.photo        || data?.photoUrl;
         const isSignaturePresent = files.signature    || data?.signature    || data?.signatureUrl;
         const isSslcPresent      = files.sslcMarkscard || data?.sslcMarkscard || data?.tenthMarksheetUrl;
         const isAadhaarPresent   = files.aadhaar      || data?.aadhaarUrl;
         const isCetPresent       = files.cetScoreCard || data?.cetScoreCard || data?.cetScoreCardUrl;
 
-        if (!isSignaturePresent || !isSslcPresent) {
-            toast.error('Signature and SSLC marks card are required');
+        if (!isPhotoPresent || !isSignaturePresent || !isSslcPresent) {
+            toast.error('Photo, Signature, and SSLC marks card are required');
             return;
         }
 
@@ -190,6 +193,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {DOCS.map(doc => {
                     const DB_MAP = {
+                        photo:                     'photoUrl',
                         signature:                 'signatureUrl',
                         sslcMarkscard:             'tenthMarksheetUrl',
                         pucMarkscard:              'twelfthMarksheetUrl',
@@ -208,7 +212,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
                     const isComplete      = isFileSelected || isFileInDb;
                     const isCompressing   = !!compressing[doc.name];
                     const isBusy          = isCompressing;
-                    const isRequired      = ['signature', 'sslcMarkscard', 'pucMarkscard', 'diplomaSemester5Marksheet', 'diplomaSemester6Marksheet', 'aadhaar'].includes(doc.name) ||
+                    const isRequired      = ['photo', 'signature', 'sslcMarkscard', 'pucMarkscard', 'diplomaSemester5Marksheet', 'diplomaSemester6Marksheet', 'aadhaar'].includes(doc.name) ||
                         (doc.name === 'cetScoreCard' && data?.admissionType !== 'MANAGEMENT');
 
                     return (

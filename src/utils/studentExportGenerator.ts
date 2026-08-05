@@ -145,6 +145,7 @@ export function mapCompleteExportData(applications: AdmissionApplication[]) {
       'Entrance Attempts': acad?.entranceAttempts || '1',
 
       // SECTION E: DOCUMENT STATUS
+      'Passport Photo': formatDocStatus(docs?.photoUrl),
       'Signature': formatDocStatus(docs?.signatureUrl),
       'SSLC Marks Card': formatDocStatus(docs?.tenthMarksheetUrl),
       'PUC Marks Card': formatDocStatus(docs?.twelfthMarksheetUrl),

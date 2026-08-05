@@ -26,7 +26,7 @@ const SupportPage = () => {
         },
         {
             question: 'Which documents are mandatory?',
-            answer: 'Mandatory documents include: Applicant E-Signature, SSLC (10th) Marks Card, PUC (12th) Marks Card OR Diploma 5th and 6th Semester Marks Cards (for Diploma applicants), Aadhaar Card, and Entrance Score Card (CET/DCET).'
+            answer: 'Mandatory documents include: Recent Passport Size Photo, Applicant E-Signature, SSLC (10th) Marks Card, PUC (12th) Marks Card OR Diploma 5th and 6th Semester Marks Cards (for Diploma applicants), Aadhaar Card, and Entrance Score Card (CET/DCET).'
         },
         {
             question: 'Can I upload black & white scanned copies?',
@@ -138,6 +138,7 @@ const SupportPage = () => {
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Mandatory Documents</span>
                         <ul className="space-y-2.5">
                             {[
+                                'Passport Size Photo',
                                 'Applicant Signature',
                                 'SSLC Marks Card',
                             ].map((doc, idx) => (
