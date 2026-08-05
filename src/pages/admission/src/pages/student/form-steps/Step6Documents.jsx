@@ -31,7 +31,6 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
             icon: FileText,
             note: data?.admissionType === 'MANAGEMENT' ? 'Accepted: JPG / PNG (Optional for Management)' : 'Accepted: JPG / PNG',
         },
-        { name: 'feesPaidReceipt',  label: 'Fees Paid Receipt',               icon: FileText,      note: 'Accepted: JPG / PNG' },
         { name: 'casteCertificate',  label: 'Caste Certificate',              icon: Image,         note: 'Accepted: JPG / PNG (Optional)' },
         { name: 'incomeCertificate', label: 'Income Certificate',             icon: Image,         note: 'Accepted: JPG / PNG (Optional)' },
         { name: 'studyCertificate',  label: '7 Years Study Certificate',       icon: FileText,      note: 'Accepted: JPG / PNG' },
@@ -49,10 +48,9 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
         casteCertificate:          'casteCertificate',
         incomeCertificate:         'gapCertificate',
         studyCertificate:          'domicileCertificate',
-        feesPaidReceipt:           'feesPaidReceipt',
     };
 
-    const COLOR_REQUIRED_DOCS = ['photo', 'sslcMarkscard', 'aadhaar', 'feesPaidReceipt'];
+    const COLOR_REQUIRED_DOCS = ['photo', 'sslcMarkscard', 'aadhaar'];
 
     const handleFileChange = async (e, docName) => {
         const file = e.target.files[0];
@@ -120,7 +118,6 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
         const isSslcPresent      = files.sslcMarkscard || data?.sslcMarkscard || data?.tenthMarksheetUrl;
         const isAadhaarPresent   = files.aadhaar      || data?.aadhaarUrl;
         const isCetPresent       = files.cetScoreCard || data?.cetScoreCard || data?.cetScoreCardUrl;
-        const isFeesPaidPresent  = files.feesPaidReceipt || data?.feesPaidReceiptUrl;
 
         if (!isPhotoPresent || !isSignaturePresent || !isSslcPresent) {
             toast.error('Photo, Signature, and SSLC marks card are required');
@@ -150,10 +147,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
             toast.error('Entrance Score Card (CET/DCET) is required');
             return;
         }
-        if (!isFeesPaidPresent) {
-            toast.error('Fees Paid Receipt is required');
-            return;
-        }
+
         if (Object.keys(files).length === 0) {
             onNext();
             return;
@@ -210,7 +204,6 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
                         casteCertificate:          'casteCertificateUrl',
                         incomeCertificate:         'gapCertificateUrl',
                         studyCertificate:          'domicileCertificateUrl',
-                        feesPaidReceipt:           'feesPaidReceiptUrl',
                     };
                     const isFileSelected  = !!files[doc.name];
                     const isFileInDb      = doc.name === 'aadhaar'
@@ -219,7 +212,7 @@ const Step6Documents = ({ onNext, onPrev, data, onUploadSuccess, applicationStat
                     const isComplete      = isFileSelected || isFileInDb;
                     const isCompressing   = !!compressing[doc.name];
                     const isBusy          = isCompressing;
-                    const isRequired      = ['photo', 'signature', 'sslcMarkscard', 'pucMarkscard', 'diplomaSemester5Marksheet', 'diplomaSemester6Marksheet', 'aadhaar', 'feesPaidReceipt'].includes(doc.name) ||
+                    const isRequired      = ['photo', 'signature', 'sslcMarkscard', 'pucMarkscard', 'diplomaSemester5Marksheet', 'diplomaSemester6Marksheet', 'aadhaar'].includes(doc.name) ||
                         (doc.name === 'cetScoreCard' && data?.admissionType !== 'MANAGEMENT');
 
                     return (

@@ -88,7 +88,6 @@ const getMissingFields = (app: AdmissionApplication | null) => {
   } else {
     if (!docs?.twelfthMarksheetUrl) missing.push("Documents: 12th/PUC Marksheet");
   }
-  if (!docs?.feesPaidReceiptUrl) missing.push("Documents: Fees Paid Receipt");
   if (!docs?.aadhaarUrl) missing.push("Documents: Aadhaar Card");
   if (!docs?.domicileCertificateUrl) missing.push("Documents: Domicile/Study Certificate");
 
@@ -867,7 +866,6 @@ export const AdmissionReviewPage: React.FC = () => {
                 ]),
                 { label: 'Entrance Score Card (CET/DCET)', field: 'cetScoreCard', url: docs.cetScoreCardUrl },
                 { label: 'Aadhaar Card copy', field: 'aadhaar', url: docs.aadhaarUrl },
-                { label: 'Fees Paid Receipt', field: 'feesPaidReceipt', url: docs.feesPaidReceiptUrl },
                 { label: 'Caste Certificate (Optional)', field: 'casteCertificate', url: docs.casteCertificateUrl },
                 { label: 'Domicile / Study Certificate', field: 'domicileCertificate', url: docs.domicileCertificateUrl },
                 { label: 'Income / Gap Year Certificate', field: 'gapCertificate', url: docs.gapCertificateUrl },

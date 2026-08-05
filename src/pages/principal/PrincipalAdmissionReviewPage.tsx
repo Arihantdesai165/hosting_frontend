@@ -511,7 +511,6 @@ export const PrincipalAdmissionReviewPage: React.FC = () => {
               ) : (
                 <DocumentItem field="twelfthMarksheet" appId={app.id} label="12th / PUC Card" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
               )}
-              <DocumentItem field="feesPaidReceipt" appId={app.id} label="Tuition / College Fee Receipt" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
               <DocumentItem field="domicileCertificate" appId={app.id} label="Study / Domicile Cert" onPreview={(url, label, isPdf) => setPreviewDoc({ url, label, isPdf })} />
             </div>
           </div>

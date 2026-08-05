@@ -1402,7 +1402,6 @@ export const StudentsDashboardPage: React.FC<StudentsDashboardPageProps> = ({ re
                         { label: 'Caste Certificate / Income Cert', key: 'casteCertificateUrl', field: 'casteCertificate' },
                         { label: 'Domicile / Study Certificate', key: 'domicileCertificateUrl', field: 'domicileCertificate' },
                         { label: 'Academic Gap Certificate', key: 'gapCertificateUrl', field: 'gapCertificate' },
-                        { label: 'Admission Fee Paid Receipt', key: 'feesPaidReceiptUrl', field: 'feesPaidReceipt' },
                       ].map((doc) => {
                         const path = selectedStudent.studentdocuments?.[doc.key as keyof typeof selectedStudent.studentdocuments];
                         if (!path) return null;

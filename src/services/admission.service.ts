@@ -185,7 +185,7 @@ export interface AdmissionApplication {
     casteCertificateUrl: string | null;
     domicileCertificateUrl: string | null;
     gapCertificateUrl: string | null;
-    feesPaidReceiptUrl: string | null;
+    feesPaidReceiptUrl?: string | null;
     admissionFeeReceiptUrl?: string | null;
   } | null;
 }

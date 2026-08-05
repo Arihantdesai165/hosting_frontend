@@ -261,7 +261,6 @@ export const DocumentVerificationWorkspaceContent: React.FC<DocumentVerification
           { id: 'diplomaSemester6', field: 'diplomaSemester6Marksheet', name: 'Diploma 6th Semester Marks Card', url: extractDocUrl(safeDocs, ['diplomaSemester6MarksheetUrl', 'diplomaSemester6Marksheet', 'diploma6thMarksheetUrl']) },
           { id: 'cet', field: 'cetScoreCard', name: 'Entrance Score Card (CET/DCET)', url: extractDocUrl(safeDocs, ['cetScoreCardUrl', 'cetScoreCard', 'entranceScoreCard', 'entranceScoreCardUrl', 'cet']) },
           { id: 'aadhaar', field: 'aadhaar', name: 'Aadhaar Card', url: extractDocUrl(safeDocs, ['aadhaarUrl', 'aadhaar', 'aadhaarCard', 'aadhaarCardUrl']) },
-          { id: 'feesPaidReceipt', field: 'feesPaidReceipt', name: 'Fees Paid Receipt', url: extractDocUrl(safeDocs, ['feesPaidReceiptUrl', 'feesPaidReceipt', 'feeReceipt', 'feeReceiptUrl', 'admissionFeeReceiptUrl']) },
           { id: 'domicile', field: 'domicileCertificate', name: 'Study / Domicile Certificate', url: extractDocUrl(safeDocs, ['domicileCertificateUrl', 'domicileCertificate', 'studyCertificate']) },
           { id: 'caste', field: 'casteCertificate', name: 'Caste Certificate', url: extractDocUrl(safeDocs, ['casteCertificateUrl', 'casteCertificate']) },
           { id: 'gap', field: 'gapCertificate', name: 'Income / Gap Certificate', url: extractDocUrl(safeDocs, ['gapCertificateUrl', 'gapCertificate', 'incomeCertificate', 'incomeCertificateUrl']) },

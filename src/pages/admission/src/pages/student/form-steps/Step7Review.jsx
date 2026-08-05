@@ -390,7 +390,6 @@ const Step7Review = ({ onPrev, readOnly = false, details: externalDetails = null
                         ) : (
                             <DataItem label="PUC / 12th Marksheet" value={docs.twelfthMarksheetUrl ? '✅ Uploaded' : '❌ Missing'} />
                         )}
-                        <DataItem label="Fees Paid Receipt" value={docs.feesPaidReceiptUrl ? '✅ Uploaded' : '❌ Missing'} />
                         <DataItem label="Domicile/Study Certificate" value={docs.domicileCertificateUrl ? '✅ Uploaded' : '❌ Missing'} />
                     </ReviewSection>
                 </div>

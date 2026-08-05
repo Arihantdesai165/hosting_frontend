@@ -155,7 +155,6 @@ export function mapCompleteExportData(applications: AdmissionApplication[]) {
       'Aadhaar Card': formatDocStatus(docs?.aadhaarUrl),
       'Income Certificate': formatDocStatus(docs?.casteCertificateUrl),
       'Study Certificate': formatDocStatus(docs?.domicileCertificateUrl),
-      'Fee Receipt': formatDocStatus(docs?.feesPaidReceiptUrl),
 
       // SECTION F: ADMIN DETAILS
       'Verified By': app.reviewedBy || 'Nodal Verification Officer',

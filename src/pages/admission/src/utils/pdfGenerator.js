@@ -32,21 +32,16 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
 
         const absoluteLogoUrl = new URL('/logo.png', window.location.origin).href;
         
-        const photoUrl = docs.photoUrl ? buildFileUrl(docs.photoUrl) : '';
         const signatureUrl = docs.signatureUrl ? buildFileUrl(docs.signatureUrl) : '';
         const logoUrl = absoluteLogoUrl;
 
         // Trace data flow logs (Step 3 & 5)
         console.log("application", details);
         console.log("application.documents", details?.studentdocuments || details?.documents);
-        console.log("photo", photoUrl);
         console.log("signature", signatureUrl);
         console.log("logo", logoUrl);
-        console.log("photoUrl", photoUrl);
         console.log("signatureUrl", signatureUrl);
         console.log("logoUrl", logoUrl);
-        console.log("Original photo path:", docs.photoUrl);
-        console.log("Resolved photo path:", buildFileUrl(docs.photoUrl));
 
         const isImageUrl = (url) => {
             if (!url) return false;
@@ -63,9 +58,7 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             { label: 'Aadhaar Card', url: docs.aadhaarUrl ? buildFileUrl(docs.aadhaarUrl) : '' },
             { label: 'Caste Certificate', url: docs.casteCertificateUrl ? buildFileUrl(docs.casteCertificateUrl) : '' },
             { label: 'Domicile Certificate', url: docs.domicileCertificateUrl ? buildFileUrl(docs.domicileCertificateUrl) : '' },
-            { label: 'Gap Certificate', url: docs.gapCertificateUrl ? buildFileUrl(docs.gapCertificateUrl) : '' },
-            { label: 'Fees Paid Receipt', url: docs.feesPaidReceiptUrl ? buildFileUrl(docs.feesPaidReceiptUrl) : '' },
-            { label: 'Admission Fee Receipt', url: docs.admissionFeeReceiptUrl ? buildFileUrl(docs.admissionFeeReceiptUrl) : '' }
+            { label: 'Gap Certificate', url: docs.gapCertificateUrl ? buildFileUrl(docs.gapCertificateUrl) : '' }
         ];
 
         const imageDocs = documentList.filter(d => d.url && isImageUrl(d.url));
@@ -134,7 +127,6 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
 
         // Fetch all images as Base64 data urls
         const logoBase64 = await fetchImageAsBase64("Logo", "/logo.png", logoUrl);
-        const photoBase64 = await fetchImageAsBase64("Photo", docs.photoUrl, photoUrl);
         const signatureBase64 = await fetchImageAsBase64("Signature", docs.signatureUrl, signatureUrl);
 
         const resolvedImageDocs = [];
@@ -186,7 +178,6 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
 
         const watermarkImg = logoBase64 ? await createImageElement(logoBase64, "Watermark") : null;
         const logoImg = logoBase64 ? await createImageElement(logoBase64, "Logo") : null;
-        const photoImg = photoBase64 ? await createImageElement(photoBase64, "Photo") : null;
         const signatureImg = signatureBase64 ? await createImageElement(signatureBase64, "Signature") : null;
 
         const getPdfStatusText = (det) => {
@@ -229,16 +220,13 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
                     letter-spacing: 2px; font-family: Arial, sans-serif;
                 }
                 .header { border-bottom: 3px solid #1a3c6e; padding-bottom: 12px; margin-bottom: 15px; }
-                .header-top { display: grid; grid-template-columns: 80px 1fr 80px; align-items: center; }
+                .header-top { display: grid; grid-template-columns: 80px 1fr; align-items: center; }
                 .logo-box { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
                 .logo-box img { width: 100%; height: 100%; object-fit: contain; }
                 .header-text { flex: 1; text-align: center; padding: 0 10px; }
                 .header-text h1 { font-size: 14pt; font-weight: bold; color: #1a3c6e; }
                 .header-text h2 { font-size: 11pt; font-weight: bold; color: #1a3c6e; border: 1.5px solid #1a3c6e; display: inline-block; padding: 1px 12px; margin: 4px 0; }
                 .header-text p { font-size: 9.5pt; color: #333; margin: 2px 0 0; }
-                .photo-box { flex-shrink: 0; width: 80px; height: 100px; border: 2px solid #1a3c6e; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fafafa; }
-                .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-                .photo-placeholder { font-size: 10px; color: #999; text-align: center; }
                 .header-bottom { display: flex; justify-content: space-between; margin-top: 10px; padding: 6px 12px; background: #f5f7fa; border: 1px solid #dde1e8; font-size: 10pt; }
                 .status-confirmed { background: #dcfce7; border: 2px solid #16a34a; padding: 8px 14px; margin: 10px 0 14px; text-align: center; font-size: 12pt; font-weight: bold; color: #15803d; letter-spacing: 1px; }
                 .notice-box { background: #fffbeb; border: 1.5px solid #d97706; padding: 8px 14px; margin-bottom: 12px; font-size: 9.5pt; color: #92400e; }
@@ -275,13 +263,12 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             <div class="header">
                 <div class="header-top">
                     <div class="logo-box" id="logo-placeholder"></div>
-                    <div class="header-text">
+                    <div class="header-text" style="padding-right: 80px;">
                         <h1>JAIN COLLEGE OF ENGINEERING AND RESEARCH</h1>
                         <p style="font-size:8px;color:#475569;">(Approved by AICTE, New Delhi, Affiliated to VTU Belagavi &amp; Recognized by Govt. of Karnataka)</p>
                         <h2>ADMISSION APPLICATION FORM</h2>
                         <p>Academic Session ${details?.academicYear || getAcademicYear()}</p>
                     </div>
-                    <div class="photo-box" id="photo-placeholder"></div>
                 </div>
                 <div class="header-bottom">
                     <span><strong>Admission No:</strong> ${details?.applicationNumber || 'N/A'}</span>
@@ -425,16 +412,6 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             logoContainer.appendChild(logoImg);
         } else if (logoContainer) {
             logoContainer.innerHTML = `<span>Logo</span>`;
-        }
-
-        const photoContainer = page1.querySelector('#photo-placeholder');
-        if (photoImg && photoContainer) {
-            photoImg.style.width = '100%';
-            photoImg.style.height = '100%';
-            photoImg.style.objectFit = 'cover';
-            photoContainer.appendChild(photoImg);
-        } else if (photoContainer) {
-            photoContainer.innerHTML = `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`;
         }
 
         const signatureContainer = page1.querySelector('#signature-placeholder');

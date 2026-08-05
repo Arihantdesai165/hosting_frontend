@@ -184,7 +184,6 @@ export const StudentEnrollmentPage: React.FC<StudentEnrollmentPageProps> = ({ de
       ]),
       { label: 'CET Score Card',      url: d.cetScoreCardUrl },
       { label: 'Aadhaar Card',        url: d.aadhaarUrl },
-      { label: 'Fees Paid Receipt',   url: d.feesPaidReceiptUrl },
       { label: 'Caste Certificate',   url: d.casteCertificateUrl },
       { label: 'Domicile Certificate',url: d.domicileCertificateUrl },
       { label: 'Gap Certificate',     url: d.gapCertificateUrl },

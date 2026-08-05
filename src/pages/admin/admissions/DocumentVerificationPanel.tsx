@@ -23,7 +23,6 @@ interface DocumentVerificationPanelProps {
     casteCertificateUrl: string | null;
     domicileCertificateUrl: string | null;
     gapCertificateUrl: string | null;
-    feesPaidReceiptUrl: string | null;
   };
   onDocumentStatusChange: (docId: string, status: 'VERIFIED' | 'REJECTED', notes?: string) => void;
 }
@@ -43,7 +42,6 @@ export const DocumentVerificationPanel: React.FC<DocumentVerificationPanelProps>
     { id: 'caste', name: 'Caste Certificate', url: documents.casteCertificateUrl, status: 'PENDING' },
     { id: 'domicile', name: 'Domicile Certificate', url: documents.domicileCertificateUrl, status: 'PENDING' },
     { id: 'gap', name: 'Gap Certificate', url: documents.gapCertificateUrl, status: 'PENDING' },
-    { id: 'feesPaidReceipt', name: 'Fees Paid Receipt', url: documents.feesPaidReceiptUrl, status: 'PENDING' },
   ].filter(doc => doc.url !== null && doc.url !== undefined); // Only show uploaded docs
 
   return (
