@@ -45,8 +45,8 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         console.log("photoUrl", photoUrl);
         console.log("signatureUrl", signatureUrl);
         console.log("logoUrl", logoUrl);
-        console.log("Original:", docs.photoUrl);
-        console.log("Resolved:", buildFileUrl(docs.photoUrl));
+        console.log("Original photo path:", docs.photoUrl);
+        console.log("Resolved photo path:", buildFileUrl(docs.photoUrl));
 
         const isImageUrl = (url) => {
             if (!url) return false;
@@ -71,47 +71,78 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
         const imageDocs = documentList.filter(d => d.url && isImageUrl(d.url));
 
         // Helper to fetch and convert images to Base64 to bypass CORS and canvas taints
-        const fetchImageAsBase64 = async (url) => {
-            if (!url) return '';
-            if (url.startsWith('data:')) return url;
+        const fetchImageAsBase64 = async (name, dbPath, resolvedUrl) => {
+            console.log(`[Base64 Debug] Starting conversion for ${name}:`);
+            console.log(`- Original database path: ${dbPath}`);
+            console.log(`- buildFileUrl() output: ${resolvedUrl}`);
+            
+            if (!resolvedUrl) {
+                console.log(`- Final Base64 string length: 0 (No URL resolved)`);
+                return '';
+            }
+            if (resolvedUrl.startsWith('data:')) {
+                console.log(`- Final Base64 string length: ${resolvedUrl.length} (Already base64)`);
+                return resolvedUrl;
+            }
+            
             try {
-                const response = await api.get(url, {
+                const response = await api.get(resolvedUrl, {
                     baseURL: '',
                     responseType: 'blob'
                 });
-                return new Promise((resolve) => {
+                
+                const blob = response.data;
+                const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = () => resolve('');
-                    reader.readAsDataURL(response.data);
+                    reader.onerror = () => reject(new Error('FileReader failed'));
+                    reader.readAsDataURL(blob);
                 });
+                
+                console.log(`- Final Base64 string length: ${base64?.length || 0}`);
+                console.log(`- Final img.src inserted into HTML: ${base64?.substring(0, 100)}...`);
+                return base64;
             } catch (err) {
-                console.error("Failed to fetch image via API:", url, err);
+                console.error(`- Base64 conversion failed for ${name} via API. Error:`, err);
+                if (err.response) {
+                    console.error(`  Axios Error Status: ${err.response.status}`);
+                    console.error(`  Axios Error Data:`, err.response.data);
+                }
+                
+                // Fallback to native fetch
                 try {
-                    const res = await fetch(url);
+                    console.log(`- Falling back to native fetch for ${name} from: ${resolvedUrl}`);
+                    const res = await fetch(resolvedUrl);
                     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
                     const blob = await res.blob();
-                    return new Promise((resolve) => {
+                    
+                    const base64 = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
                         reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = () => resolve('');
+                        reader.onerror = () => reject(new Error('FileReader failed'));
                         reader.readAsDataURL(blob);
                     });
+                    
+                    console.log(`- Final Base64 string length (fallback): ${base64?.length || 0}`);
+                    return base64;
                 } catch (fetchErr) {
-                    console.error("Failed to fetch image via native fetch:", url, fetchErr);
+                    console.error(`- Native fetch fallback also failed for ${name}. Exception:`, fetchErr);
                     return '';
                 }
             }
         };
 
         // Fetch all images as Base64 data urls
-        const logoBase64 = await fetchImageAsBase64(logoUrl);
-        const photoBase64 = await fetchImageAsBase64(photoUrl);
-        const signatureBase64 = await fetchImageAsBase64(signatureUrl);
+        const logoBase64 = await fetchImageAsBase64("Logo", "/logo.png", logoUrl);
+        const photoBase64 = await fetchImageAsBase64("Photo", docs.photoUrl, photoUrl);
+        const signatureBase64 = await fetchImageAsBase64("Signature", docs.signatureUrl, signatureUrl);
 
         const resolvedImageDocs = [];
         for (const d of imageDocs) {
-            const base64 = await fetchImageAsBase64(d.url);
+            const matchingDocKey = Object.keys(docs).find(k => docs[k] && buildFileUrl(docs[k]) === d.url);
+            const originalPath = matchingDocKey ? docs[matchingDocKey] : d.url;
+            
+            const base64 = await fetchImageAsBase64(d.label, originalPath, d.url);
             if (base64) {
                 resolvedImageDocs.push({ label: d.label, base64 });
             }
@@ -382,11 +413,29 @@ export const downloadAdmissionPDF = async (api, toast, applicationId = null) => 
             })
         );
 
-        // Trace Logs to confirm image states
-        wrapperImages.forEach(img => {
-            console.log(`Image URL: ${img.src.substring(0, 80)}...`);
-            console.log(`Image State: Complete=${img.complete}, NaturalWidth=${img.naturalWidth}`);
+        // Log details of each image before running html2canvas (Step 4)
+        console.log(`[Image Verification] Checking ${wrapperImages.length} images before html2canvas:`);
+        let hasFailedImage = false;
+        
+        wrapperImages.forEach((img, idx) => {
+            console.log(`Image #${idx + 1}:`);
+            console.log(`- Src: ${img.src.substring(0, 150)}...`);
+            console.log(`- Complete: ${img.complete}`);
+            console.log(`- NaturalWidth: ${img.naturalWidth}`);
+            console.log(`- NaturalHeight: ${img.naturalHeight}`);
+            
+            if (img.naturalWidth === 0) {
+                hasFailedImage = true;
+                console.error(`[Image Verification] Image #${idx + 1} (${img.alt || 'No alt'}) has naturalWidth === 0! It failed to load/render.`);
+            }
         });
+
+        if (hasFailedImage) {
+            toast.dismiss(toastId);
+            toast.error("One or more images failed to render correctly. Please inspect the browser DevTools Console for details.");
+            document.body.removeChild(wrapper);
+            throw new Error("PDF generation stopped: one or more images had naturalWidth === 0");
+        }
 
         // Delay to allow decoder pipeline to catch up
         await new Promise(r => setTimeout(r, 600));
