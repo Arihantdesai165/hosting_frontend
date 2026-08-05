@@ -437,13 +437,55 @@ const AdmissionForm = () => {
             const par = details?.studentparentdetails || {};
             const addr = details?.studentaddress || {};
             const acad = details?.studentacademicdetails || {};
-            const signatureUrl = docs.signatureUrl || '';
+            const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+            const backendBase = apiBaseUrl.replace('/api', '');
+
+            const absoluteLogoUrl = new URL('/logo.png', window.location.origin).href;
+
+            const getDocUrl = (path) => {
+                if (!path) return '';
+                if (path.startsWith('http')) return path;
+                const normalizedPath = path.startsWith('/') ? path : '/' + path;
+                return `${backendBase}${normalizedPath}`;
+            };
+
+            const photoUrl = docs.photoUrl ? getDocUrl(docs.photoUrl) : '';
+            const signatureUrl = docs.signatureUrl ? getDocUrl(docs.signatureUrl) : '';
+            const logoUrl = absoluteLogoUrl;
+
+            console.log({
+                logoUrl,
+                photoUrl,
+                signatureUrl
+            });
+
+            const preloadImage = (url) => {
+                return new Promise((resolve) => {
+                    if (!url) {
+                        resolve(false);
+                        return;
+                    }
+                    const img = new Image();
+                    img.onload = () => resolve(true);
+                    img.onerror = () => resolve(false);
+                    img.src = url;
+                });
+            };
+
+            let logoLoaded = false;
+            let photoLoaded = false;
+            let signatureLoaded = false;
+
+            await Promise.all([
+                preloadImage(logoUrl).then(res => logoLoaded = res),
+                preloadImage(photoUrl).then(res => photoLoaded = res),
+                preloadImage(signatureUrl).then(res => signatureLoaded = res)
+            ]);
+
             const q = (details?.qualification || '').toUpperCase();
             const showPUC = q === 'PUC' || (!q && details?.admissionType === 'KCET');
             const showDiploma = q === 'DIPLOMA' || (!q && details?.admissionType === 'DCET');
             const applicantName = pd.firstName ? `${pd.firstName} ${pd.lastName || ''}`.trim() : `${user.firstName || ''} ${user.lastName || ''}`.trim();
-            const absoluteLogoUrl = window.location.origin + '/logo.png';
-            const photoUrl = docs.photoUrl || '';
 
             const getPdfStatusText = (det) => {
                 const status = det?.applicationStatus;
@@ -517,11 +559,11 @@ const AdmissionForm = () => {
                     </style>
                 </head>
                 <body>
-                    <div class="watermark"><img src="${absoluteLogoUrl}" alt="" /></div>
+                    <div class="watermark">${logoLoaded ? `<img src="${logoUrl}" alt="" />` : ''}</div>
                     <div class="application-form">
                         <div class="header">
                             <div class="header-top">
-                                <div class="logo-box"><img src="${absoluteLogoUrl}" alt="JCER Logo" /></div>
+                                <div class="logo-box">${logoLoaded ? `<img src="${logoUrl}" alt="JCER Logo" />` : `<span style="font-size:8px;">Logo Not Loaded</span>`}</div>
                                 <div class="header-text">
                                     <h1>JAIN COLLEGE OF ENGINEERING AND RESEARCH</h1>
                                     <p style="font-size:8px;color:#475569;">(Approved by AICTE, New Delhi, Affiliated to VTU Belagavi &amp; Recognized by Govt. of Karnataka)</p>
@@ -529,7 +571,7 @@ const AdmissionForm = () => {
                                     <p>Academic Session ${details?.academicYear || formData?.academicYear || getAcademicYear()}</p>
                                 </div>
                                 <div class="photo-box">
-                                    ${photoUrl ? `<img src="${photoUrl}" alt="Passport Photo" />` : `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`}
+                                    ${photoUrl ? (photoLoaded ? `<img src="${photoUrl}" alt="Passport Photo" />` : `<span class="photo-placeholder" style="color:red;">Passport Photo<br>Not Available</span>`) : `<span class="photo-placeholder">PASSPORT<br>PHOTO</span>`}
                                 </div>
                             </div>
                             <div class="header-bottom">
@@ -613,6 +655,11 @@ const AdmissionForm = () => {
                                 <div class="signature-line"></div>
                                 <div class="signature-label">Date &amp; Place</div>
                             </div>
+                            <div class="signature-item">
+                                ${signatureUrl ? (signatureLoaded ? `<img class="signature-img" src="${signatureUrl}" alt="Signature" />` : `<span style="font-size: 8px; color: red; display: block; margin-bottom: 5px;">Signature Not Loaded</span>`) : `<span style="font-size: 8px; color: #999; display: block; margin-bottom: 5px;">Signature Not Uploaded</span>`}
+                                <div class="signature-line"></div>
+                                <div class="signature-label">Applicant Signature</div>
+                            </div>
                         </div>
                         <div class="footer">
                             <p>Admission No: ${details?.applicationNumber || 'N/A'} &nbsp;|&nbsp; Status: ${pdfStatus} &nbsp;|&nbsp; Printed on: ${new Date().toLocaleString('en-IN')}</p>
@@ -630,8 +677,23 @@ const AdmissionForm = () => {
                 printWindow.document.write(printHTML);
                 printWindow.document.title = "";
                 printWindow.document.close();
-                printWindow.focus();
-                setTimeout(() => { printWindow.print(); }, 150);
+
+                const printImages = Array.from(printWindow.document.images);
+                const imagePromises = printImages.map((img) => {
+                    return new Promise((resolve) => {
+                        if (img.complete) {
+                            resolve();
+                            return;
+                        }
+                        img.onload = () => resolve();
+                        img.onerror = () => resolve();
+                    });
+                });
+
+                Promise.all(imagePromises).then(() => {
+                    printWindow.focus();
+                    printWindow.print();
+                });
             } else {
                 toast.error('Please allow popups from this site to download the PDF.');
             }
