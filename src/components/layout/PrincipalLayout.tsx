@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/authSlice';
+import authService from '../../services/auth.service';
 import API from '../../services/api';
 import { RootState } from '../../store';
 import { getAcademicYear } from '../../utils/date.util';
@@ -108,10 +109,9 @@ export const PrincipalLayout: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await authService.logout();
     dispatch(logout());
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
     navigate('/login');
   };
 

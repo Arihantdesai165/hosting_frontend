@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAcademicYear } from '../../utils/date.util';
 import { useNavigate } from 'react-router-dom';
+import API from '../../services/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { HeroSection } from '../../components/common/HeroSection';
@@ -67,12 +68,9 @@ export const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/system/config`);
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success && json.data) {
-            setConfig(json.data);
-          }
+        const res = await API.get('/system/config');
+        if (res.data && res.data.success && res.data.data) {
+          setConfig(res.data.data);
         }
       } catch (err) {
         console.warn("Could not retrieve system config from backend, using default presets.", err);

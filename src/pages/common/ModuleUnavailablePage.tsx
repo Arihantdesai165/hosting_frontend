@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft, LogOut } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
+import authService from '../../services/auth.service';
 
 export const ModuleUnavailablePage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await authService.logout();
     dispatch(logout());
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
     navigate('/login');
   };
 

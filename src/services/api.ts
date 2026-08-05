@@ -22,15 +22,14 @@ const API = axios.create({
 });
 
 console.log("USING SHARED API");
-console.log("BASE URL =", API.defaults.baseURL);
+console.log("API BASE URL =", API.defaults.baseURL);
 
 // Request interceptor to add Authorization token
 API.interceptors.request.use(
   (config) => {
     console.log(
       "REQUEST:",
-      config.baseURL,
-      config.url,
+      (config.baseURL || '') + (config.url || ''),
       config.method
     );
     startLoadingCallback();
